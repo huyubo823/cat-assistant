@@ -230,8 +230,4 @@ function escapeHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// 旧接口兼容（数据已迁移到 Supabase，导入功能已废弃）
-function importData() {
-  alert('数据已自动同步到云端，无需手动导入。');
-  return false;
-}
+

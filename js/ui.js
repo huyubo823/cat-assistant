@@ -1175,17 +1175,14 @@ function renderSettingsTab(state) {
     html += '</div>';
   }
 
-  // --- Card: Data Backup ---
+  // --- Card: Cloud Backup ---
   html += '<div class="card">';
-  html += '<div class="card-header">💾 数据备份</div>';
+  html += '<div class="card-header">☁️ 数据存储与备份</div>';
 
-  html += '<p style="font-size:14px;color:var(--color-text-light);margin-bottom:12px;">导出数据文件以便备份或迁移到新设备。导入之前导出的数据可以恢复记录。</p>';
+  html += '<p style="font-size:13px;color:var(--color-success);background:var(--color-success-light);padding:8px 12px;border-radius:8px;margin-bottom:12px;">✅ 数据已自动同步到 Supabase 云端，多设备实时共享，无需手动导入。</p>';
+  html += '<p style="font-size:14px;color:var(--color-text-light);margin-bottom:12px;">如需离线备份或迁移，可导出完整数据文件：</p>';
 
-  html += '<button class="btn btn-secondary" id="export-data-btn" style="margin-bottom:8px;">📥 导出数据</button>';
-  html += '<div style="position:relative;">';
-  html += '<button class="btn btn-secondary" id="import-data-btn-trigger">📤 导入数据</button>';
-  html += '<input type="file" id="import-data-input" accept=".json" style="display:none;">';
-  html += '</div>';
+  html += '<button class="btn btn-secondary" id="export-data-btn">📥 导出云端数据备份</button>';
   html += '</div>';
 
   // --- Card: AI Chat ---
@@ -1332,43 +1329,7 @@ function renderSettingsTab(state) {
     });
   }
 
-  // --- Wire up Import button ---
-  var importTrigger = document.getElementById('import-data-btn-trigger');
-  var importInput = document.getElementById('import-data-input');
-  if (importTrigger && importInput) {
-    importTrigger.addEventListener('click', function () {
-      importInput.click();
-    });
-
-    importInput.addEventListener('change', function () {
-      var file = importInput.files[0];
-      if (!file) return;
-
-      if (!confirm('导入数据将覆盖当前记录，确定继续？')) {
-        importInput.value = '';
-        return;
-      }
-
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        var success = importData(e.target.result);
-        if (success) {
-          alert('数据导入成功！应用将重新加载。');
-          if (typeof App !== 'undefined' && App.init) {
-            App.init();
-          }
-        } else {
-          alert('数据导入失败，请检查文件格式是否正确。');
-        }
-        importInput.value = '';
-      };
-      reader.onerror = function () {
-        alert('文件读取失败，请重试。');
-        importInput.value = '';
-      };
-      reader.readAsText(file);
-    });
-  }
+  // 导入功能已废弃 — 数据存储在 Supabase 云端，自动同步
 
   // --- Wire up AI Chat ---
   // Save API key
