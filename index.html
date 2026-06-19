@@ -106,6 +106,23 @@
     <p class="loading-text">加载中...</p>
   </div>
 
+  <!-- ===== 清除旧版 Service Worker（迁移到纯线上） ===== -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (regs) {
+        for (var i = 0; i < regs.length; i++) {
+          regs[i].unregister();
+        }
+        // 清空所有缓存
+        if (window.caches) {
+          caches.keys().then(function (names) {
+            for (var j = 0; j < names.length; j++) caches.delete(names[j]);
+          });
+        }
+      });
+    }
+  </script>
+
   <!-- ===== Supabase SDK ===== -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
