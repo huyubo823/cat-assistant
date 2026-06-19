@@ -50,14 +50,22 @@ var App = {
       loadingOverlay.classList.add('hidden');
       renderCurrentTab();
 
-      // 订阅实时变更
+      // 订阅实时变更（合并策略：远端不覆盖本地最近修改）
       subscribeTaskChanges(cat.id, function () {
-        fetchTaskStatus(cat.id).then(function (ts) {
-          App.state.taskStatus = ts;
-          // 跳过 toggle 后 2 秒内的 Realtime 渲染，等待 Supabase 副本同步
-          var recentlyToggled = App._lastToggleTime && (Date.now() - App._lastToggleTime < 2000);
-          if (!recentlyToggled && App.state.currentTab === 'home') {
-            renderHomeTab(App.state);
+        fetchTaskStatus(cat.id).then(function (serverTs) {
+          // 合并：保留本地有但远端还没同步的任务
+          var local = App.state.taskStatus;
+          if (serverTs.tasks && local && local.tasks) {
+            for (var tid in local.tasks) {
+              if (local.tasks.hasOwnProperty(tid) && !serverTs.tasks[tid]) {
+                serverTs.tasks[tid] = local.tasks[tid];
+              }
+            }
+          }
+          App.state.taskStatus = serverTs;
+          // 最近 2 秒内有本地操作，跳过渲染（等待远端稳定）
+          if (!(App._lastToggleTime && Date.now() - App._lastToggleTime < 2000)) {
+            if (App.state.currentTab === 'home') renderHomeTab(App.state);
           }
         });
       });
@@ -85,7 +93,6 @@ var App = {
    * 任务打卡
    */
   toggleTask: async function (taskId) {
-    // 记录点击时间，阻止 Realtime 在 2 秒内渲染（等待副本同步）
     App._lastToggleTime = Date.now();
 
     var ts = App.state.taskStatus;
@@ -113,48 +120,53 @@ var App = {
 
     // 切换完成状态
     if (type === 'daily_reset') {
-      // 每日任务：切换今日完成
       if (taskEntry.completed_at === today) {
-        newCompleted = null; // 取消
+        newCompleted = null;
       } else {
         newCompleted = today;
       }
     } else if (type === 'schedule_trigger') {
       if (taskEntry.completed_at) {
-        newCompleted = null; // 取消
+        newCompleted = null;
       } else {
         newCompleted = new Date().toISOString();
       }
     } else {
       // periodic
       if (taskEntry.completed_at && !taskEntry.period_next) {
-        newCompleted = null; // 取消
+        newCompleted = null;
       } else if (taskEntry.completed_at) {
-        newCompleted = null; // 取消
+        newCompleted = null;
       } else {
         newCompleted = new Date().toISOString();
         newPeriodNext = new Date(Date.now() + periodDays * 86400000).toISOString();
       }
     }
 
-    // 写入 Supabase（try/finally 防止网络失败导致 _togglingTask 卡死）
+    // 保存旧值用于回滚
+    var oldCompleted = taskEntry.completed_at;
+    var oldPeriodNext = taskEntry.period_next;
+
+    // ── 乐观更新：立即写入本地状态并渲染 ──
+    if (!ts.tasks) ts.tasks = {};
+    ts.tasks[taskId] = {
+      completed_at: newCompleted,
+      period_next: newPeriodNext,
+      type: type
+    };
+    if (App.state.currentTab === 'home') renderHomeTab(App.state);
+
+    // ── 异步写入 Supabase ──
     try {
       await upsertTaskStatus(catId, taskId, type, newCompleted, newPeriodNext, type === 'daily_reset' ? today : null);
-
-      // 更新本地状态
-      if (!ts.tasks) ts.tasks = {};
+    } catch (_e) {
+      // 写入失败 → 回滚到旧值
       ts.tasks[taskId] = {
-        completed_at: newCompleted,
-        period_next: newPeriodNext,
+        completed_at: oldCompleted,
+        period_next: oldPeriodNext,
         type: type
       };
-
-      // 合并到当前状态对象，避免 await 期间 Realtime 替换了引用
-      if (!App.state.taskStatus.tasks) App.state.taskStatus.tasks = {};
-      App.state.taskStatus.tasks[taskId] = ts.tasks[taskId];
       if (App.state.currentTab === 'home') renderHomeTab(App.state);
-    } finally {
-      // _lastToggleTime 会在 2 秒后自动过期，无需手动清除
     }
   },
 
