@@ -1,16 +1,16 @@
 const CACHE_NAME = 'cat-assistant-v1';
 
 const PRECACHE_URLS = [
-  '/',
-  '/index.html',
-  '/css/styles.css',
-  '/js/utils.js',
-  '/js/data.js',
-  '/js/tasks.js',
-  '/js/ai.js',
-  '/js/ui.js',
-  '/js/app.js',
-  '/knowledge/knowledge-bundle.json'
+  './',
+  'index.html',
+  'css/styles.css',
+  'js/utils.js',
+  'js/data.js',
+  'js/tasks.js',
+  'js/ai.js',
+  'js/ui.js',
+  'js/app.js',
+  'knowledge/knowledge-bundle.json'
 ];
 
 // Install: precache all core app files

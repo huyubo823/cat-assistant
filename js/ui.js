@@ -167,7 +167,7 @@ function showNotFound(shareKey) {
     '<p style="font-size: 48px; margin-bottom: 16px;">🐱</p>' +
     '<p style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">猫咪不存在</p>' +
     '<p style="color: #888; font-size: 14px;">分享链接无效，或猫咪已被删除</p>' +
-    '<a href="/" class="btn btn-primary" style="margin-top: 24px; text-decoration: none;">创建我的猫咪</a>' +
+    '<a href="./" class="btn btn-primary" style="margin-top: 24px; text-decoration: none;">创建我的猫咪</a>' +
     '</div>';
 }
 
