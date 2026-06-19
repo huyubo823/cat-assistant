@@ -206,21 +206,6 @@ function subscribeTaskChanges(catId, onUpdate) {
 }
 
 /* ------------------------------------------------------------------
-   Data Export / Import（云端备份用）
-   ------------------------------------------------------------------ */
-
-async function exportData(shareKey) {
-  var cat = await fetchCat(shareKey);
-  if (!cat) throw new Error('猫咪不存在');
-  var tasks = await fetchTaskStatus(cat.id);
-  return JSON.stringify({
-    cat: cat,
-    task_status: tasks,
-    export_date: new Date().toISOString()
-  }, null, 2);
-}
-
-/* ------------------------------------------------------------------
    Helpers
    ------------------------------------------------------------------ */
 

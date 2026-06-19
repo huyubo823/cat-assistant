@@ -1175,16 +1175,6 @@ function renderSettingsTab(state) {
     html += '</div>';
   }
 
-  // --- Card: Cloud Backup ---
-  html += '<div class="card">';
-  html += '<div class="card-header">☁️ 数据存储与备份</div>';
-
-  html += '<p style="font-size:13px;color:var(--color-success);background:var(--color-success-light);padding:8px 12px;border-radius:8px;margin-bottom:12px;">✅ 数据已自动同步到 Supabase 云端，多设备实时共享，无需手动导入。</p>';
-  html += '<p style="font-size:14px;color:var(--color-text-light);margin-bottom:12px;">如需离线备份或迁移，可导出完整数据文件：</p>';
-
-  html += '<button class="btn btn-secondary" id="export-data-btn">📥 导出云端数据备份</button>';
-  html += '</div>';
-
   // --- Card: AI Chat ---
   html += '<div class="card">';
   html += '<div class="card-header">🤖 AI 智能问答</div>';
@@ -1302,34 +1292,7 @@ function renderSettingsTab(state) {
     });
   }
 
-  // --- Wire up Export button ---
-  var exportBtn = document.getElementById('export-data-btn');
-  if (exportBtn) {
-    exportBtn.addEventListener('click', function () {
-      if (!App.state.shareKey) { alert('尚未创建猫咪档案'); return; }
-      exportBtn.disabled = true;
-      exportBtn.textContent = '导出中...';
-      exportData(App.state.shareKey).then(function (jsonStr) {
-        var blob = new Blob([jsonStr], { type: 'application/json' });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = 'cat-assistant-backup-' + getTodayStr() + '.json';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        exportBtn.disabled = false;
-        exportBtn.textContent = '导出JSON备份';
-      }).catch(function (err) {
-        alert('导出失败: ' + (err.message || '未知错误'));
-        exportBtn.disabled = false;
-        exportBtn.textContent = '导出JSON备份';
-      });
-    });
-  }
-
-  // 导入功能已废弃 — 数据存储在 Supabase 云端，自动同步
+  // 数据存储于 Supabase 云端，实时同步，无需导入导出
 
   // --- Wire up AI Chat ---
   // Save API key
