@@ -54,8 +54,9 @@ var App = {
       subscribeTaskChanges(cat.id, function () {
         fetchTaskStatus(cat.id).then(function (ts) {
           App.state.taskStatus = ts;
-          // 跳过 toggle 期间的渲染，避免竞态闪退
-          if (!App._togglingTask && App.state.currentTab === 'home') {
+          // 跳过 toggle 后 2 秒内的 Realtime 渲染，等待 Supabase 副本同步
+          var recentlyToggled = App._lastToggleTime && (Date.now() - App._lastToggleTime < 2000);
+          if (!recentlyToggled && App.state.currentTab === 'home') {
             renderHomeTab(App.state);
           }
         });
@@ -84,8 +85,8 @@ var App = {
    * 任务打卡
    */
   toggleTask: async function (taskId) {
-    // 防止 Realtime 回调在 toggle 期间覆盖渲染
-    App._togglingTask = true;
+    // 记录点击时间，阻止 Realtime 在 2 秒内渲染（等待副本同步）
+    App._lastToggleTime = Date.now();
 
     var ts = App.state.taskStatus;
     var taskEntry = ts.tasks[taskId];
@@ -153,7 +154,7 @@ var App = {
       App.state.taskStatus.tasks[taskId] = ts.tasks[taskId];
       if (App.state.currentTab === 'home') renderHomeTab(App.state);
     } finally {
-      App._togglingTask = false;
+      // _lastToggleTime 会在 2 秒后自动过期，无需手动清除
     }
   },
 
