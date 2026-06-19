@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cat-assistant-v1';
+const CACHE_NAME = 'cat-assistant-v2';
 
 const PRECACHE_URLS = [
   './',

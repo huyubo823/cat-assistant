@@ -1164,7 +1164,7 @@ function renderSettingsTab(state) {
 
   // --- Card: Share Link ---
   if (App.state.shareKey) {
-    var shareUrl = window.location.origin + '/?cat=' + App.state.shareKey;
+    var shareUrl = window.location.origin + window.location.pathname + '?cat=' + App.state.shareKey;
     html += '<div class="card">';
     html += '<div class="card-header">🔗 分享链接</div>';
     html += '<p style="font-size:14px;color:var(--color-text-light);margin-bottom:8px;">通过此链接可以在其他设备上查看和管理猫咪信息</p>';
