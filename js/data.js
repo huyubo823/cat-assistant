@@ -29,7 +29,8 @@ function initSupabase() {
    ------------------------------------------------------------------ */
 
 function loadKnowledgeBundle() {
-  var bundleUrl = '/knowledge/knowledge-bundle.json';
+  // 相对路径，兼容 localhost 和 GitHub Pages
+  var bundleUrl = 'knowledge/knowledge-bundle.json';
   return fetch(bundleUrl)
     .then(function (response) {
       if (!response.ok) {
