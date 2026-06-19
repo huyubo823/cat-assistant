@@ -139,7 +139,10 @@ async function fetchTaskStatus(catId) {
     .from('task_status')
     .select('*')
     .eq('cat_id', catId);
-  if (result.error) return { tasks: {} };
+  if (result.error) {
+    console.error('[CatCare] fetchTaskStatus 错误:', result.error);
+    return { tasks: {}, lastResetDate: getTodayStr() };
+  }
 
   // 转换为旧格式兼容 tasks.js
   var status = { tasks: {}, lastResetDate: getTodayStr() };

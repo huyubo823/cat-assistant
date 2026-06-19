@@ -56,6 +56,10 @@ var App = {
           // 合并：保留本地有但远端还没同步的任务
           var local = App.state.taskStatus;
           if (serverTs.tasks && local && local.tasks) {
+            // 保留本地 lastResetDate（防止远端错误数据清除每日任务）
+            if (local.lastResetDate && !serverTs.lastResetDate) {
+              serverTs.lastResetDate = local.lastResetDate;
+            }
             for (var tid in local.tasks) {
               if (local.tasks.hasOwnProperty(tid) && !serverTs.tasks[tid]) {
                 serverTs.tasks[tid] = local.tasks[tid];
@@ -67,6 +71,8 @@ var App = {
           if (!(App._lastToggleTime && Date.now() - App._lastToggleTime < 2000)) {
             if (App.state.currentTab === 'home') renderHomeTab(App.state);
           }
+        }).catch(function (err) {
+          console.error('[CatCare] Realtime fetch 失败:', err);
         });
       });
 
@@ -161,6 +167,7 @@ var App = {
       await upsertTaskStatus(catId, taskId, type, newCompleted, newPeriodNext, type === 'daily_reset' ? today : null);
     } catch (_e) {
       // 写入失败 → 回滚到旧值
+      console.error('[CatCare] upsert 失败，回滚:', taskId, _e);
       ts.tasks[taskId] = {
         completed_at: oldCompleted,
         period_next: oldPeriodNext,
