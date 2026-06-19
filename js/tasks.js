@@ -201,7 +201,9 @@ function generateDailyTasks(cat, bundle, taskStatus, todayOverride) {
 
   // ==================================================================
   //  Sort: pending / overdue first, then done.
-  //  Within each status group: daily_reset → schedule_trigger → periodic
+  //  Within active group: daily_reset → schedule_trigger → periodic
+  //  Within done group: daily_reset → periodic → schedule_trigger
+  //  (done one-time tasks sink to the very bottom)
   // ==================================================================
   var typeOrder = {
     'daily_reset': 0,
@@ -214,6 +216,13 @@ function generateDailyTasks(cat, bundle, taskStatus, todayOverride) {
     var aActive = (a.status === 'pending' || a.status === 'overdue') ? 0 : 1;
     var bActive = (b.status === 'pending' || b.status === 'overdue') ? 0 : 1;
     if (aActive !== bActive) return aActive - bActive;
+
+    // Both done: one-time tasks (schedule_trigger) sink to very bottom
+    if (aActive === 1 && bActive === 1) {
+      var aOneTime = a.type === 'schedule_trigger' ? 1 : 0;
+      var bOneTime = b.type === 'schedule_trigger' ? 1 : 0;
+      if (aOneTime !== bOneTime) return aOneTime - bOneTime;
+    }
 
     // Same activity group — order by task type
     var aType = typeOrder[a.type] !== undefined ? typeOrder[a.type] : 99;

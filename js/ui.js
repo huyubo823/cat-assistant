@@ -250,6 +250,7 @@ function renderHomeTab(state) {
     // Group tasks by type
     var dailyTasks = [];
     var scheduleTasks = [];
+    var scheduleDoneTasks = []; // 已完成的一次性任务，渲染在页面最底部
     var periodicTasks = [];
 
     for (var i = 0; i < tasks.length; i++) {
@@ -257,7 +258,11 @@ function renderHomeTab(state) {
       if (t.type === 'daily_reset') {
         dailyTasks.push(t);
       } else if (t.type === 'schedule_trigger') {
-        scheduleTasks.push(t);
+        if (t.status === 'done') {
+          scheduleDoneTasks.push(t);
+        } else {
+          scheduleTasks.push(t);
+        }
       } else if (t.type === 'periodic') {
         periodicTasks.push(t);
       }
@@ -303,6 +308,7 @@ function renderHomeTab(state) {
     html += renderTaskGroup('🔄 每日必做', dailyTasks);          // 🔄 每日必做
     html += renderTaskGroup('📅 待完成事项', scheduleTasks); // 📅 待完成事项
     html += renderTaskGroup('🔁 定期任务', periodicTasks);       // 🔁 定期任务
+    html += renderTaskGroup('✅ 已完成', scheduleDoneTasks);        // ✅ 已完成的一次性任务沉底
   }
 
   html += '</div>'; // close .card

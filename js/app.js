@@ -54,7 +54,10 @@ var App = {
       subscribeTaskChanges(cat.id, function () {
         fetchTaskStatus(cat.id).then(function (ts) {
           App.state.taskStatus = ts;
-          if (App.state.currentTab === 'home') renderHomeTab(App.state);
+          // 跳过 toggle 期间的渲染，避免竞态闪退
+          if (!App._togglingTask && App.state.currentTab === 'home') {
+            renderHomeTab(App.state);
+          }
         });
       });
 
@@ -81,6 +84,9 @@ var App = {
    * 任务打卡
    */
   toggleTask: async function (taskId) {
+    // 防止 Realtime 回调在 toggle 期间覆盖渲染
+    App._togglingTask = true;
+
     var ts = App.state.taskStatus;
     var taskEntry = ts.tasks[taskId];
     var today = getTodayStr();
@@ -130,19 +136,25 @@ var App = {
       }
     }
 
-    // 写入 Supabase
-    await upsertTaskStatus(catId, taskId, type, newCompleted, newPeriodNext, type === 'daily_reset' ? today : null);
+    // 写入 Supabase（try/finally 防止网络失败导致 _togglingTask 卡死）
+    try {
+      await upsertTaskStatus(catId, taskId, type, newCompleted, newPeriodNext, type === 'daily_reset' ? today : null);
 
-    // 更新本地状态
-    if (!ts.tasks) ts.tasks = {};
-    ts.tasks[taskId] = {
-      completed_at: newCompleted,
-      period_next: newPeriodNext,
-      type: type
-    };
+      // 更新本地状态
+      if (!ts.tasks) ts.tasks = {};
+      ts.tasks[taskId] = {
+        completed_at: newCompleted,
+        period_next: newPeriodNext,
+        type: type
+      };
 
-    App.state.taskStatus = ts;
-    if (App.state.currentTab === 'home') renderHomeTab(App.state);
+      // 合并到当前状态对象，避免 await 期间 Realtime 替换了引用
+      if (!App.state.taskStatus.tasks) App.state.taskStatus.tasks = {};
+      App.state.taskStatus.tasks[taskId] = ts.tasks[taskId];
+      if (App.state.currentTab === 'home') renderHomeTab(App.state);
+    } finally {
+      App._togglingTask = false;
+    }
   },
 
   /* ----------------------------------------------------------------
@@ -172,6 +184,12 @@ var App = {
 function renderCurrentTab() {
   var currentTab = App.state.currentTab;
   var state = App.state;
+
+  // 每次切换 Tab 时重新计算年龄，确保喂养/健康等页面使用最新年龄
+  if (state.cat && state.cat.birthday) {
+    App.state.age = calculateAge(state.cat.birthday);
+    state = App.state;
+  }
 
   var sections = document.querySelectorAll('.tab-content');
   for (var i = 0; i < sections.length; i++) {
