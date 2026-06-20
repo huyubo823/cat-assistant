@@ -23,7 +23,7 @@ function resetDailyTasksIfNewDay(taskStatus) {
     for (var taskId in tasks) {
       if (!tasks.hasOwnProperty(taskId)) continue;
       var completed = tasks[taskId].completed_at;
-      if (typeof completed === 'string' && completed.length === 10) {
+      if (typeof completed === 'string' && tasks[taskId].type === 'daily_reset') {
         tasks[taskId].completed_at = null;
       }
     }
@@ -88,7 +88,8 @@ function generateDailyTasks(cat, bundle, taskStatus, todayOverride) {
     // ================================================================
     if (task.type === 'daily_reset') {
       var drEntry = taskStatus.tasks[task.id];
-      var drCompletedToday = drEntry && drEntry.completed_at === today;
+      var drCompletedToday = drEntry && drEntry.completed_at &&
+          (drEntry.completed_at === today || drEntry.completed_at.substring(0, 10) === today);
 
       result.push({
         id: task.id,
