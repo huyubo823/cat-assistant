@@ -23,12 +23,6 @@
   <script defer src="js/ai.js"></script>
   <script defer src="js/store.js"></script>
   <script defer src="js/actions.js"></script>
-  <!-- Init listener MUST be registered BEFORE Alpine fires alpine:init -->
-  <script defer>
-    document.addEventListener('alpine:init', function () {
-      Actions.init();
-    });
-  </script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
 </head>
 <body x-data>

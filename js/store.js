@@ -81,4 +81,9 @@ document.addEventListener('alpine:init', function () {
   window.App = window.App || {};
   window.App.store = Alpine.store('app');
   window.App.state = Alpine.store('app');
+
+  // Defer init until all defer scripts have loaded
+  setTimeout(function () {
+    if (window.Actions && window.Actions.init) Actions.init();
+  }, 50);
 });
