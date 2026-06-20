@@ -41,53 +41,60 @@ window.Actions = {
 
     if (shareKey) {
       // ── Existing share link → load from cloud ──
-      var cat = await fetchCat(shareKey);
-      if (!cat) {
+      try {
+        var cat = await fetchCat(shareKey);
+        if (!cat) {
+          uiStore.loading = false;
+          appStore.loading = false;
+          uiStore.notFound = shareKey;
+          return;
+        }
+        appStore.cat = cat;
+        appStore.shareKey = shareKey;
+        appStore.catId = cat.id;
+        appStore.age = calculateAge(cat.birthday);
+        appStore.taskStatus = await fetchTaskStatus(cat.id);
+        uiStore.loading = false;
+        appStore.loading = false;
+
+        tasksStore.refresh();
+
+        // Subscribe to realtime changes (merge strategy: preserve local
+        // tasks that the server hasn't seen yet)
+        subscribeTaskChanges(cat.id, function () {
+          fetchTaskStatus(cat.id).then(function (serverTs) {
+            var local = appStore.taskStatus;
+            if (serverTs.tasks && local && local.tasks) {
+              // Preserve local lastResetDate (prevent stale server data
+              // from clearing daily tasks)
+              if (local.lastResetDate && !serverTs.lastResetDate) {
+                serverTs.lastResetDate = local.lastResetDate;
+              }
+              // Preserve local tasks that server doesn't have yet
+              for (var tid in local.tasks) {
+                if (local.tasks.hasOwnProperty(tid) && !serverTs.tasks[tid]) {
+                  serverTs.tasks[tid] = local.tasks[tid];
+                }
+              }
+            }
+            appStore.taskStatus = serverTs;
+            // Guard: skip re-render if a local toggle just happened
+            // (within 2 seconds), letting the realtime stream settle
+            if (!(appStore._lastToggleTime && Date.now() - appStore._lastToggleTime < 2000)) {
+              if (appStore.currentTab === 'home') {
+                tasksStore.refresh();
+              }
+            }
+          }).catch(function (err) {
+            console.error('[CatCare] Realtime fetch 失败:', err);
+          });
+        });
+      } catch (e) {
+        console.error('[CatCare] 初始化失败:', e);
         uiStore.loading = false;
         appStore.loading = false;
         uiStore.notFound = shareKey;
-        return;
       }
-      appStore.cat = cat;
-      appStore.shareKey = shareKey;
-      appStore.catId = cat.id;
-      appStore.age = calculateAge(cat.birthday);
-      appStore.taskStatus = await fetchTaskStatus(cat.id);
-      uiStore.loading = false;
-      appStore.loading = false;
-
-      tasksStore.refresh();
-
-      // Subscribe to realtime changes (merge strategy: preserve local
-      // tasks that the server hasn't seen yet)
-      subscribeTaskChanges(cat.id, function () {
-        fetchTaskStatus(cat.id).then(function (serverTs) {
-          var local = appStore.taskStatus;
-          if (serverTs.tasks && local && local.tasks) {
-            // Preserve local lastResetDate (prevent stale server data
-            // from clearing daily tasks)
-            if (local.lastResetDate && !serverTs.lastResetDate) {
-              serverTs.lastResetDate = local.lastResetDate;
-            }
-            // Preserve local tasks that server doesn't have yet
-            for (var tid in local.tasks) {
-              if (local.tasks.hasOwnProperty(tid) && !serverTs.tasks[tid]) {
-                serverTs.tasks[tid] = local.tasks[tid];
-              }
-            }
-          }
-          appStore.taskStatus = serverTs;
-          // Guard: skip re-render if a local toggle just happened
-          // (within 2 seconds), letting the realtime stream settle
-          if (!(appStore._lastToggleTime && Date.now() - appStore._lastToggleTime < 2000)) {
-            if (appStore.currentTab === 'home') {
-              tasksStore.refresh();
-            }
-          }
-        }).catch(function (err) {
-          console.error('[CatCare] Realtime fetch 失败:', err);
-        });
-      });
 
     } else {
       // ── No share link → show welcome form ──
