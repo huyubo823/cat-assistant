@@ -219,99 +219,19 @@
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'feeding'" x-transition>
       <template x-if="$store.app.bundle">
-
-      <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🍼 喂养指南</h2>
-
-      <!-- Current Feeding Plan -->
-      <div class="card" x-show="$store.app.bundle && $store.app.age">
-        <div class="card-header">📋 当前喂养方案</div>
-        <template x-for="stage in $store.app.bundle.feeding.stages.filter(function(s){return $store.app.age.weeks >= s.age_weeks[0] && $store.app.age.weeks <= s.age_weeks[1];})" :key="stage.stage">
-          <div>
-            <p style="font-weight:600;font-size:16px;margin-bottom:8px;" x-text="stage.stage"></p>
-            <p style="font-size:14px;margin-bottom:4px;">食物: <span x-text="stage.food" style="color:var(--color-orange-dark);"></span></p>
-            <p style="font-size:14px;margin-bottom:4px;">每日餐数: <span x-text="stage.meals_per_day + '顿'"></span></p>
-            <p style="font-size:14px;margin-bottom:4px;" x-show="stage.amount_per_meal_g">每餐份量: <span x-text="stage.amount_per_meal_g"></span></p>
-            <p style="font-size:14px;margin-bottom:4px;" x-show="stage.amount_per_meal_ml">每餐奶量: <span x-text="stage.amount_per_meal_ml + 'ml'"></span></p>
-            <p style="font-size:14px;margin-bottom:4px;">每日总量: <span x-text="stage.amount_daily"></span></p>
-            <p style="font-size:14px;margin-bottom:4px;">每日热量: <span x-text="stage.calories_daily + 'kcal'"></span></p>
-            <p style="font-size:13px;color:var(--color-text-light);margin-top:8px;line-height:1.6;" x-text="stage.notes"></p>
-            <div style="margin-top:8px;" x-show="stage.food_types && stage.food_types.length > 0">
-              <span style="font-size:13px;font-weight:600;">推荐产品:</span>
-              <ul style="font-size:13px;color:var(--color-text-light);padding-left:16px;margin-top:4px;">
-                <template x-for="ft in stage.food_types" :key="ft">
-                  <li x-text="ft"></li>
-                </template>
-              </ul>
-            </div>
+      <h2 style=\"font-size:22px;font-weight:700;margin-bottom:16px;\">🍼 喂养指南</h2>
+      <div class=\"card\" x-show=\"$store.app.age\">
+        <div class=\"card-header\">📋 当前喂养方案 — <span x-text=\"$store.app.age.weeks\"></span>周龄</div>
+        <template x-for=\"s in $store.app.bundle.feeding.stages\" :key=\"s.stage\">
+          <div x-show=\"$store.app.age.weeks >= s.age_weeks[0] && $store.app.age.weeks <= s.age_weeks[1]\">
+            <p x-text=\"s.stage\" style=\"font-weight:600;\"></p>
+            <p>食物: <span x-text=\"s.food\"></span></p>
+            <p>每日餐次: <span x-text=\"s.meals_per_day + '顿'\"></span></p>
+            <p>每日总量: <span x-text=\"s.amount_daily\"></span></p>
+            <p x-text=\"s.notes\" style=\"font-size:13px;color:var(--color-text-light);\"></p>
           </div>
         </template>
-        <p style="font-size:13px;color:var(--color-text-muted);margin-top:12px;" x-show="$store.app.bundle.feeding.stages.filter(function(s){return $store.app.age.weeks >= s.age_weeks[0] && $store.app.age.weeks <= s.age_weeks[1];}).length === 0 && $store.app.age.weeks > 52">
-          猫咪已成年，请参考成猫喂养方案。每日2顿，体重×2%为每日总量。
-        </p>
       </div>
-
-      <!-- Weaning Guide (age 3-8 weeks) -->
-      <div class="card" x-show="$store.app.age && $store.app.age.weeks >= 3 && $store.app.age.weeks <= 8 && $store.app.bundle">
-        <div class="card-header">🍽️ 断奶过渡指南</div>
-        <template x-for="(step, idx) in $store.app.bundle.feeding.weaning_guide.steps" :key="idx">
-          <p style="font-size:14px;margin-bottom:8px;line-height:1.6;" x-text="step"></p>
-        </template>
-        <div style="margin-top:12px;padding:12px;background:var(--color-orange-light);border-radius:var(--radius-btn);">
-          <p style="font-size:13px;font-weight:600;margin-bottom:6px;">💡 小贴士</p>
-          <template x-for="(tip, idx) in $store.app.bundle.feeding.weaning_guide.tips" :key="idx">
-            <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;" x-text="tip"></p>
-          </template>
-        </div>
-      </div>
-
-      <!-- Food Transition (collapsible) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-transition'] }" x-show="$store.app.bundle">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-transition')">
-          🔄 7天换粮法
-        </div>
-        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-transition']">
-          <p style="font-size:13px;color:var(--color-danger);font-weight:600;margin-bottom:8px;" x-text="$store.app.bundle.feeding.food_transition.warning"></p>
-          <template x-for="step in $store.app.bundle.feeding.food_transition.steps" :key="step.day">
-            <div style="display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--color-border);font-size:14px;">
-              <span style="min-width:50px;font-weight:600;" x-text="'第'+step.day+'天'"></span>
-              <span style="flex:1;font-size:13px;" x-text="'旧粮'+step.old_food_percent+'% + 新粮'+step.new_food_percent+'%'"></span>
-              <span style="font-size:12px;color:var(--color-text-light);" x-text="step.note"></span>
-            </div>
-          </template>
-        </div>
-      </div>
-
-      <!-- Forbidden Foods (collapsible) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-forbidden'] }" x-show="$store.app.bundle">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-forbidden')">
-          ⛔ 禁食清单
-          <span class="badge badge-danger" style="margin-left:6px;" x-text="$store.app.bundle.feeding.forbidden_foods.length + '种'"></span>
-        </div>
-        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-forbidden']">
-          <template x-for="item in $store.app.bundle.feeding.forbidden_foods" :key="item.food">
-            <div style="padding:10px 0;border-bottom:1px solid var(--color-border);">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-                <span style="font-weight:600;font-size:14px;" x-text="item.food"></span>
-                <span class="badge" :class="item.severity.includes('致命') ? 'badge-danger' : 'badge-warning'" x-text="item.severity"></span>
-              </div>
-              <p style="font-size:13px;color:var(--color-text-light);" x-text="item.reason"></p>
-              <p style="font-size:12px;color:var(--color-danger);margin-top:4px;" x-text="'⚠️ '+item.action"></p>
-            </div>
-          </template>
-        </div>
-      </div>
-
-      <!-- Water Guide -->
-      <div class="card" x-show="$store.app.bundle">
-        <div class="card-header">💧 饮水指南</div>
-        <p style="font-size:14px;margin-bottom:8px;">
-          每日饮水量: <span style="font-weight:600;color:var(--color-orange-dark);" x-text="$store.app.bundle.feeding.water_guide.daily_water_ml_per_kg + 'ml/kg'"></span>
-        </p>
-        <template x-for="tip in $store.app.bundle.feeding.water_guide.tips" :key="tip">
-          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:6px;line-height:1.5;" x-text="'• ' + tip"></p>
-        </template>
-      </div>
-
       </template>
     </section>
 
