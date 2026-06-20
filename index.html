@@ -125,7 +125,7 @@
           体重: <span x-text="$store.app.cat.weight_history[$store.app.cat.weight_history.length - 1].weight_g + 'g'"></span>
         </div>
         <div class="cat-age-badge" x-show="$store.app.age">
-          <span x-text="$store.app.age.weeks + '周' + ($store.app.age.days > 0 ? $store.app.age.days + '天' : '')"></span>
+          <span x-text="($store.app.age ? $store.app.age.weeks : 0) + '周' + ($store.app.age && $store.app.age.days > 0 ? $store.app.age.days + '天' : '')"></span>
         </div>
       </div>
 

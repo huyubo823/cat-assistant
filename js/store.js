@@ -13,7 +13,7 @@ document.addEventListener('alpine:init', function () {
      $store.app — Global application state (mirrors old App.state)
      ---------------------------------------------------------------- */
   Alpine.store('app', {
-    bundle: {},
+    bundle: null,
     cat: {},
     age: null,
     taskStatus: { tasks: {}, lastResetDate: '' },
