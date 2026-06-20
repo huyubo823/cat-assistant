@@ -148,8 +148,15 @@ async function fetchTaskStatus(catId) {
   var status = { tasks: {}, lastResetDate: getTodayStr() };
   for (var i = 0; i < result.data.length; i++) {
     var t = result.data[i];
+    var completedAt = t.completed_at;
+    // daily_reset: Supabase timestamptz 列会把 "2026-06-20" 存成
+    // "2026-06-20T00:00:00+00:00"，在此归一化为日期串，确保全站
+    // 日期比较 (=== today) 一致
+    if (t.type === 'daily_reset' && completedAt && completedAt.length > 10) {
+      completedAt = completedAt.substring(0, 10);
+    }
     status.tasks[t.task_id] = {
-      completed_at: t.completed_at,
+      completed_at: completedAt,
       period_next: t.period_next,
       type: t.type
     };
