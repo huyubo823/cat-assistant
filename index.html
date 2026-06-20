@@ -16,13 +16,13 @@
 <body x-data>
 
   <!-- ===== Loading Overlay ===== -->
-  <div class="loading-overlay" x-show="$store.app.loading">
+  <div class="loading-overlay" x-show="$store.app && $store.app.loading">
     <div class="spinner"></div>
     <p style="color:var(--color-text-light);font-size:14px;">加载中...</p>
   </div>
 
   <!-- ===== Welcome Overlay (first-time users) ===== -->
-  <div class="welcome-overlay" x-show="$store.ui.showWelcome">
+  <div class="welcome-overlay" x-show="$store.ui && $store.ui.showWelcome">
     <div class="welcome-card">
       <h1 class="welcome-title">🐱 欢迎使用猫咪助手</h1>
       <p class="welcome-subtitle">请填写猫咪信息，开始科学养育之旅</p>
@@ -81,7 +81,7 @@
   </div>
 
   <!-- ===== Not Found State ===== -->
-  <div class="error-state" x-show="$store.ui.notFound">
+  <div class="error-state" x-show="$store.ui && $store.ui.notFound">
     <p style="font-size:48px;">😿</p>
     <p style="font-size:18px;font-weight:600;margin-top:16px;">未找到猫咪</p>
     <p style="color:var(--color-text-light);font-size:14px;margin-top:8px;">
