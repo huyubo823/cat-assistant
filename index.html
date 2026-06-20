@@ -635,9 +635,7 @@
       <!-- Poison Helpline -->
       <div class="card" x-show="$store.app.bundle" style="background:var(--color-danger-light);border:2px solid var(--color-danger);">
         <div class="card-header" style="color:var(--color-danger);">📞 中毒求助热线</div>
-        <template x-for="(val, key) in $store.app.bundle.emergency.poison_helpline.china" :key="key">
-          <p style="font-size:14px;margin-bottom:4px;" x-text="key + ': ' + val"></p>
-        </template>
+        <p style="font-size:14px;margin-bottom:4px;" x-text="$store.app.bundle.emergency.poison_helpline.china"></p>
         <p style="font-size:12px;color:var(--color-text-light);margin-top:4px;" x-text="$store.app.bundle.emergency.poison_helpline.note"></p>
       </div>
 
@@ -666,12 +664,16 @@
       <div class="card" x-show="$store.app.bundle">
         <div class="card-header">💩 大便观察指南</div>
         <p style="font-size:14px;font-weight:600;margin-bottom:6px;color:var(--color-success);">正常:</p>
-        <template x-for="item in $store.app.bundle.emergency.stool_guide.normal" :key="item">
-          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
+        <template x-for="(val, key) in $store.app.bundle.emergency.stool_guide.normal" :key="key">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="key + ': ' + val"></p>
         </template>
         <p style="font-size:14px;font-weight:600;margin-top:12px;margin-bottom:6px;color:var(--color-danger);">异常（需关注）:</p>
-        <template x-for="item in $store.app.bundle.emergency.stool_guide.abnormal" :key="item">
-          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
+        <template x-for="item in $store.app.bundle.emergency.stool_guide.abnormal" :key="item.type">
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);">
+            <p style="font-weight:600;font-size:14px;" x-text="item.type"></p>
+            <p style="font-size:13px;color:var(--ink-secondary);" x-text="item.meaning"></p>
+            <span class="badge badge-danger" x-text="item.urgency"></span>
+          </div>
         </template>
       </div>
 
