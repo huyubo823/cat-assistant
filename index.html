@@ -12,6 +12,23 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="css/styles.css">
   <title>猫咪助手</title>
+
+  <!-- Supabase CDN: synchronous (must load before all defer scripts) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <!-- All app scripts: defer ensures they run after body is parsed -->
+  <script defer src="js/utils.js"></script>
+  <script defer src="js/data.js"></script>
+  <script defer src="js/tasks.js"></script>
+  <script defer src="js/ai.js"></script>
+  <script defer src="js/store.js"></script>
+  <script defer src="js/actions.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
+  <script defer>
+    document.addEventListener('alpine:init', function () {
+      Actions.init();
+    });
+  </script>
 </head>
 <body x-data>
 
@@ -802,22 +819,6 @@
     </button>
   </nav>
 
-  <!-- ===== Script Loading Order ===== -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/utils.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/tasks.js"></script>
-  <script src="js/ai.js"></script>
-  <!-- store.js BEFORE Alpine: alpine:init listener must be registered -->
-  <!-- before Alpine fires the event synchronously on load -->
-  <script src="js/store.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
-  <script src="js/actions.js"></script>
-  <script>
-    document.addEventListener('alpine:init', function () {
-      Actions.init();
-    });
-  </script>
 
 </body>
 </html>
