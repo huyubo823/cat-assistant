@@ -223,7 +223,38 @@
       <template x-if="$store.app.bundle">
       <div>
         <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🍼 喂养指南</h2>
-        <p x-text="$store.app.bundle.feeding.stages.length + ' stages loaded'"></p>
+        <div class="card" x-show="$store.app.age">
+          <div class="card-header">📋 当前喂养方案</div>
+          <template x-for="s in $store.app.bundle.feeding.stages" :key="s.stage">
+            <div x-show="$store.app.age.weeks >= s.age_weeks[0] && $store.app.age.weeks <= s.age_weeks[1]">
+              <p style="font-weight:600;font-size:16px;" x-text="s.stage"></p>
+              <p style="font-size:14px;">食物: <span x-text="s.food" style="color:var(--sunrise);"></span></p>
+              <p style="font-size:14px;">每日餐次: <span x-text="s.meals_per_day + '顿'"></span></p>
+              <p style="font-size:14px;">每日总量: <span x-text="s.amount_daily"></span></p>
+              <p style="font-size:13px;color:var(--ink-secondary);line-height:1.6;" x-text="s.notes"></p>
+            </div>
+          </template>
+        </div>
+        <div class="card" x-show="$store.app.age.weeks >= 3 && $store.app.age.weeks <= 8">
+          <div class="card-header">🍽️ 断奶过渡指南</div>
+          <template x-for="step in $store.app.bundle.feeding.weaning_guide.steps" :key="step">
+            <p style="font-size:14px;margin-bottom:6px;line-height:1.6;" x-text="step"></p>
+          </template>
+        </div>
+        <div class="card">
+          <div class="card-header">⛔ 禁食清单</div>
+          <template x-for="item in $store.app.bundle.feeding.forbidden_foods" :key="item.food">
+            <div style="padding:8px 0;border-bottom:1px solid var(--border);">
+              <span style="font-weight:600;" x-text="item.food"></span>
+              <span class="badge" style="margin-left:6px;" x-text="item.severity"></span>
+              <p style="font-size:13px;color:var(--ink-secondary);margin-top:4px;" x-text="item.reason"></p>
+            </div>
+          </template>
+        </div>
+        <div class="card">
+          <div class="card-header">💧 饮水指南</div>
+          <p style="font-size:14px;">每日饮水量: <span style="font-weight:600;color:var(--sunrise);" x-text="$store.app.bundle.feeding.water_guide.daily_water_ml_per_kg + 'ml/kg'"></span></p>
+        </div>
       </div>
       </template>
     </section>
@@ -241,7 +272,7 @@
       <div class="card" x-show="$store.app.cat">
         <div class="card-header">⚖️ 体重记录</div>
         <div x-show="$store.app.cat.weight_history && $store.app.cat.weight_history.length > 0">
-          <template x-for="(rec, idx) in $store.app.cat.weight_history.slice().reverse().slice(0, 10)" :key="idx">
+          <template x-for="(rec, idx) in ($store.app.cat.weight_history || []).slice().reverse().slice(0, 10)" :key="idx">
             <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-border);font-size:14px;">
               <span x-text="rec.date"></span>
               <span style="font-weight:600;" x-text="rec.weight_g + 'g'"></span>
