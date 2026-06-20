@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-20T11:30:00+08:00",
+  "title": "Design System: 猫咪助手",
+  "extensions": {
+    "colorMeta": {
+      "sunrise-orange": { "role": "primary", "displayName": "日出橘", "canonical": "#FF8C42", "tonalRamp": ["#FF6000", "#FF7520", "#FF8C42", "#FFA060", "#FFB580", "#FFCCAA", "#FFE0CC", "#FFF0E5"] },
+      "sunrise-light": { "role": "primary-light", "displayName": "日出浅", "canonical": "#FFF0E5", "tonalRamp": ["#FFD0B0", "#FFD8BC", "#FFE0CC", "#FFE8D8", "#FFF0E5", "#FFF5EE", "#FFFAF5", "#FFFCFA"] },
+      "sunrise-deep": { "role": "primary-deep", "displayName": "日出深", "canonical": "#E67A30", "tonalRamp": ["#C05010", "#D06020", "#E67A30", "#F09040", "#FFA050", "#FFB560", "#FFCC80", "#FFE0B0"] },
+      "cream-bg": { "role": "neutral-bg", "displayName": "奶霜底", "canonical": "#FFFAF5", "tonalRamp": ["#FFF0E5", "#FFF2EA", "#FFF5EE", "#FFF7F2", "#FFFAF5", "#FFFCF8", "#FFFFFB", "#FFFFFF"] }
+    },
+    "typographyMeta": {
+      "title": { "displayName": "Title", "purpose": "卡片标题和页面主标题" },
+      "body": { "displayName": "Body", "purpose": "正文、任务名称、说明文字" },
+      "label": { "displayName": "Label", "purpose": "按钮、标签、时间戳" }
+    },
+    "shadows": [
+      { "name": "card-default", "value": "0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.08)", "purpose": "默认卡片浮起效果" },
+      { "name": "card-raised", "value": "0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.10)", "purpose": "模态框/弹出层" },
+      { "name": "button-pressed", "value": "0 1px 2px rgba(0,0,0,0.06)", "purpose": "按钮按压态" }
+    ],
+    "motion": [
+      { "name": "ease-soft", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "按钮 hover、卡片浮起等微交互" },
+      { "name": "ease-bounce", "value": "cubic-bezier(0.34, 1.56, 0.64, 1)", "purpose": "弹入效果，如完成打卡" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "主要操作按钮，暖橘底色，hover 轻微放大",
+      "html": "<button class=\"ds-btn-primary\">开始记录</button>",
+      "css": ".ds-btn-primary { background: #FF8C42; color: #fff; padding: 12px 24px; border-radius: 14px; border: none; font-size: 15px; font-weight: 500; cursor: pointer; transition: background 0.2s ease-out, transform 0.2s ease-out; box-shadow: 0 2px 8px rgba(255,140,66,0.20); } .ds-btn-primary:hover { background: #E67A30; transform: scale(1.02); } .ds-btn-primary:active { transform: scale(0.98); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }"
+    },
+    {
+      "name": "Task Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "任务列表项，左边框颜色区分类型，完成态变暗+删除线",
+      "html": "<div class=\"ds-task-item ds-task-daily\"><div class=\"ds-task-checkbox checked\"></div><span class=\"ds-task-icon\">🍽️</span><span class=\"ds-task-name\">喂食（早餐）</span></div>",
+      "css": ".ds-task-item { display: flex; align-items: center; padding: 12px; background: #fff; border-radius: 12px; margin-bottom: 6px; border-left: 3px solid #FF8C42; transition: all 0.2s ease-out; } .ds-task-checkbox { width: 24px; height: 24px; border: 2px solid #eee; border-radius: 50%; margin-right: 12px; cursor: pointer; transition: all 0.2s; } .ds-task-checkbox.checked { background: #27AE60; border-color: #27AE60; } .ds-task-name { flex: 1; font-size: 15px; }"
+    },
+    {
+      "name": "Info Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "喂养/健康指南卡片，双层阴影有厚度",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-header\">🍼 当前喂食方案</div><p>食物类型：幼猫粮</p></div>",
+      "css": ".ds-card { background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.08); transition: box-shadow 0.3s ease-out; } .ds-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.10); } .ds-card-header { font-size: 18px; font-weight: 600; margin-bottom: 8px; }"
+    },
+    {
+      "name": "Bottom Tab Bar",
+      "kind": "nav",
+      "refersTo": "bottom-nav",
+      "description": "底部导航栏，白色底+细上边框，当前页橘色高亮",
+      "html": "<nav class=\"ds-tab-bar\"><button class=\"ds-tab-btn active\"><span>🏠</span><span>首页</span></button><button class=\"ds-tab-btn\"><span>🍼</span><span>喂养</span></button></nav>",
+      "css": ".ds-tab-bar { display: flex; background: #fff; padding: 8px 0 env(safe-area-inset-bottom); border-top: 1px solid #eee; } .ds-tab-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 6px 0; border: none; background: none; font-size: 10px; color: #888; cursor: pointer; transition: color 0.2s; } .ds-tab-btn.active { color: #FF8C42; } .ds-tab-btn .tab-icon { font-size: 22px; margin-bottom: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "午后梳毛",
+    "overview": "午后梳毛是一种安静日常的照料仪式——不急不缓，有节奏感，充满信任和温度。这也是猫咪助手想传达的体验：它不是催促你做事的闹钟，而是陪在你身边、提醒你今天该为小猫做什么的温柔伙伴。整个系统的视觉语言从「日光」和「触感」出发。暖橘是日出那一刻的光，米白是铺在窗台上的柔软毯子，深色的文字是梳子划过毛发留下的痕迹。卡片有厚度，像叠在手边的毛巾；按钮圆润柔软，按下去有轻微的回弹感。",
+    "keyCharacteristics": [
+      "暖而不烫——橘色是点睛，不是铺满",
+      "厚而不重——卡片有阴影有层次，但页面整体轻量",
+      "软而不散——圆角大、动效柔，但信息层级清晰",
+      "拒绝杂乱——每个页面只有一个核心动作"
+    ],
+    "rules": [
+      { "name": "The 10% Rule", "body": "日出橘在任何页面上的面积不超过10%。它的力量来自稀缺，不是铺张。", "section": "colors" },
+      { "name": "The Warm White Anchor", "body": "所有背景都偏向暖白色谱。永远不用冷灰作为底色。", "section": "colors" },
+      { "name": "The Warm Shadow Rule", "body": "所有阴影叠在暖色底上。不用纯黑叠加阴影——在暖米白底上看起来会发灰。", "section": "elevation" },
+      { "name": "The One Size Down Rule", "body": "当不确定字体大小时，选小一号。猫咪助手用信息密度换取呼吸感。", "section": "typography" }
+    ],
+    "dos": [
+      "使用暖色系——米白底、奶霜色、暖橘点缀",
+      "卡片用双层阴影制造厚度，shadow 要有呼吸感",
+      "圆角至少 12px，卡片推荐 20px",
+      "按钮 hover 加微动效（scale 1.02 + transition 0.2s）",
+      "每个页面保持一个核心操作，信息层级不超过三层"
+    ],
+    "donts": [
+      "使用冷灰色底色——不要 #f5f5f5、#e0e0e0、#fafafa",
+      "像「我的南京」一样把功能堆在一个页面——信息密集、层级混乱",
+      "像 QQ 一样入口拥挤、干扰元素多",
+      "用纯黑 #000000 做文字色",
+      "阴影太重——不要超过 0 8px 24px",
+      "卡片用直角或小圆角（<8px）",
+      "过度使用橘色——任何页面橘色面积不超过 10%"
+    ]
+  }
+}
