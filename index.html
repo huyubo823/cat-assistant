@@ -111,6 +111,7 @@
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'home'" x-transition>
       <template x-if="$store.app.cat">
+      <div>
 
       <!-- Hero Cat Card -->
       <div class="card cat-card" x-show="$store.app.cat">
@@ -210,6 +211,7 @@
       <div class="empty-state" x-show="$store.tasks.daily.length === 0 && $store.tasks.schedule.length === 0 && $store.tasks.periodic.length === 0 && $store.tasks.doneItems.length === 0 && $store.app.cat">
         今天没有待办任务 🎉
       </div>
+      </div>
       </template>
 
     </section>
@@ -231,6 +233,7 @@
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'health'" x-transition>
       <template x-if="$store.app.bundle">
+      <div>
 
       <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🏥 健康</h2>
 
@@ -365,7 +368,7 @@
           <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
         </template>
       </div>
-
+      </div>
       </template>
     </section>
 
@@ -374,6 +377,7 @@
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'growth'" x-transition>
       <template x-if="$store.app.bundle">
+      <div>
 
       <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">📚 成长</h2>
 
@@ -477,6 +481,7 @@
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'settings'" x-transition>
       <template x-if="$store.app.cat">
+      <div>
 
       <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">⚙️ 设置</h2>
 
@@ -592,6 +597,7 @@
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'emergency'" x-transition>
       <template x-if="$store.app.bundle">
+      <div>
 
       <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🆘 紧急情况</h2>
 
