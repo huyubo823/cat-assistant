@@ -111,13 +111,11 @@ body {
 }
 
 .tab-content {
-  display: none;
   padding: var(--space-md);
   animation: none;
 }
 
 .tab-content.active {
-  display: block;
   animation: fadeSlide 0.3s var(--ease-soft);
 }
 

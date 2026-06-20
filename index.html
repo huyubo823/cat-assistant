@@ -106,11 +106,6 @@
   <!-- ===== Main Content (shown when loaded and cat exists) ===== -->
   <div x-show="!$store.app.loading && $store.app.cat && !$store.ui.notFound">
 
-    <!-- Emergency Header Strip -->
-    <a class="emergency-header" @click.prevent="Actions.switchTab('emergency')" href="#">
-      🚨 紧急情况？点此查看判断指南
-    </a>
-
     <!-- ============================================================
          TAB 1: 🏠 首页 (home)
          ============================================================ -->
