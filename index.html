@@ -110,7 +110,7 @@
          TAB 1: 🏠 首页 (home)
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'home'" x-transition>
-      <div x-show="$store.app.cat">
+      <template x-if="$store.app.cat">
 
       <!-- Hero Cat Card -->
       <div class="card cat-card" x-show="$store.app.cat">
@@ -218,7 +218,7 @@
          TAB 2: 🍼 喂养 (feeding)
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'feeding'" x-transition>
-      <div x-show="$store.app.bundle">
+      <template x-if="$store.app.bundle">
 
       <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🍼 喂养指南</h2>
 
@@ -312,14 +312,14 @@
         </template>
       </div>
 
-      </div>
+      </template>
     </section>
 
     <!-- ============================================================
          TAB 3: 🏥 健康 (health)
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'health'" x-transition>
-      <div x-show="$store.app.bundle">
+      <template x-if="$store.app.bundle">
 
       <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🏥 健康</h2>
 
@@ -455,14 +455,14 @@
         </template>
       </div>
 
-      </div>
+      </template>
     </section>
 
     <!-- ============================================================
          TAB 4: 📚 成长 (growth)
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'growth'" x-transition>
-      <div x-show="$store.app.bundle">
+      <template x-if="$store.app.bundle">
 
       <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">📚 成长</h2>
 
@@ -558,14 +558,14 @@
         </template>
       </div>
 
-      </div>
+      </template>
     </section>
 
     <!-- ============================================================
          TAB 5: ⚙️ 设置 (settings)
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'settings'" x-transition>
-      <div x-show="$store.app.cat">
+      <template x-if="$store.app.cat">
 
       <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">⚙️ 设置</h2>
 
@@ -673,14 +673,14 @@
         </p>
       </div>
 
-      </div>
+      </template>
     </section>
 
     <!-- ============================================================
          TAB 6: 🆘 紧急 (emergency)
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'emergency'" x-transition>
-      <div x-show="$store.app.bundle">
+      <template x-if="$store.app.bundle">
 
       <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🆘 紧急情况</h2>
 
@@ -776,7 +776,7 @@
         </template>
       </div>
 
-      </div>
+      </template>
     </section>
 
   </div><!-- /main content wrapper -->
