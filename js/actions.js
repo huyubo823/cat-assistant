@@ -153,10 +153,8 @@ window.Actions = {
         newCompleted = new Date().toISOString();
       }
     } else {
-      // periodic
-      if (taskEntry.completed_at && !taskEntry.period_next) {
-        newCompleted = null;
-      } else if (taskEntry.completed_at) {
+      // periodic — toggle: if currently done, undo; otherwise mark complete
+      if (taskEntry.completed_at) {
         newCompleted = null;
       } else {
         newCompleted = new Date().toISOString();
@@ -224,9 +222,14 @@ window.Actions = {
    * @param {object} formData  {name, birthday, breed, gender, weight_history}
    */
   createCat: async function (formData) {
-    var cat = await createCat(formData);
-    var newUrl = window.location.pathname + '?cat=' + cat.share_key;
-    window.location.href = newUrl;
+    try {
+      var cat = await createCat(formData);
+      var newUrl = window.location.pathname + '?cat=' + cat.share_key;
+      window.location.href = newUrl;
+    } catch (e) {
+      console.error('[CatCare] 创建失败:', e);
+      alert('创建失败，请检查网络后重试');
+    }
   },
 
   /**
@@ -236,12 +239,16 @@ window.Actions = {
   updateCat: async function (updates) {
     var appStore = Alpine.store('app');
     var shareKey = appStore.shareKey;
-    await updateCat(shareKey, updates);
-    // Apply changes to local reactive store
-    for (var key in updates) {
-      if (updates.hasOwnProperty(key)) {
-        appStore.cat[key] = updates[key];
+    try {
+      await updateCat(shareKey, updates);
+      for (var key in updates) {
+        if (updates.hasOwnProperty(key)) {
+          appStore.cat[key] = updates[key];
+        }
       }
+    } catch (e) {
+      console.error('[CatCare] 更新失败:', e);
+      alert('保存失败，请检查网络后重试');
     }
   },
 
@@ -317,10 +324,17 @@ window.Actions = {
     var cat = appStore.cat;
 
     if (!cat.weight_history) cat.weight_history = [];
+    var oldHistory = cat.weight_history.slice();
     cat.weight_history.push({ date: getTodayStr(), weight_g: weightG });
     cat.weight_history.sort(function (a, b) { return a.date.localeCompare(b.date); });
 
-    await updateCat(appStore.shareKey, { weight_history: cat.weight_history });
+    try {
+      await updateCat(appStore.shareKey, { weight_history: cat.weight_history });
+    } catch (e) {
+      console.error('[CatCare] 保存体重失败:', e);
+      cat.weight_history = oldHistory;
+      alert('保存失败，请检查网络后重试');
+    }
   },
 
   /* ----------------------------------------------------------------
@@ -377,7 +391,8 @@ window.Actions = {
   sendChatFromUI: function () {
     var q = Alpine.store('ui').chatInput;
     if (q && q.trim()) Actions.sendChatMessage(q.trim());
-    document.getElementById('chat-input-field').focus();
+    var el = document.querySelector('.chat-input');
+    if (el) el.focus();
   },
 
   chatEnterHandler: function (event) {
