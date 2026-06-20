@@ -3,136 +3,819 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="theme-color" content="#fff8f0">
-  <meta name="description" content="小猫养育助手 - 科学喂养、健康管理、成长记录">
+  <meta name="theme-color" content="#FFFAF5">
+  <meta name="description" content="猫咪助手 - 科学喂养、健康管理、成长记录">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="猫咪助手">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="css/styles.css">
-  <title>猫咪助手 - 小猫养育PWA</title>
+  <title>猫咪助手</title>
 </head>
-<body>
+<body x-data>
 
-  <!-- ===== Emergency Header Bar (fixed top) ===== -->
-  <header id="emergency-header" class="emergency-header">
-    <a href="#tab-emergency" class="emergency-link">🚨 紧急情况？点此查看判断指南</a>
-  </header>
+  <!-- ===== Loading Overlay ===== -->
+  <div class="loading-overlay" x-show="$store.app.loading">
+    <div class="spinner"></div>
+    <p style="color:var(--color-text-light);font-size:14px;">加载中...</p>
+  </div>
 
-  <!-- ===== Main Content Area ===== -->
-  <main id="main-content">
-
-    <!-- Home tab (visible by default) -->
-    <section id="tab-home" class="tab-content" style="display: block;">
-      <div class="home-welcome">
-        <h1>🐱 小猫养育助手</h1>
-        <p class="home-subtitle">科学喂养，健康长大</p>
-        <div class="home-placeholder">加载中...</div>
-      </div>
-    </section>
-
-    <!-- Feeding tab -->
-    <section id="tab-feeding" class="tab-content" style="display: none;">
-      <h2>🍼 喂养</h2>
-      <div class="tab-placeholder">加载中...</div>
-    </section>
-
-    <!-- Health tab -->
-    <section id="tab-health" class="tab-content" style="display: none;">
-      <h2>🏥 健康</h2>
-      <div class="tab-placeholder">加载中...</div>
-    </section>
-
-    <!-- Growth tab -->
-    <section id="tab-growth" class="tab-content" style="display: none;">
-      <h2>📚 成长</h2>
-      <div class="tab-placeholder">加载中...</div>
-    </section>
-
-    <!-- Settings tab -->
-    <section id="tab-settings" class="tab-content" style="display: none;">
-      <h2>⚙️ 设置</h2>
-      <div class="tab-placeholder">加载中...</div>
-    </section>
-
-    <!-- Emergency content (accessible via header link, hidden by default) -->
-    <section id="tab-emergency" class="tab-content" style="display: none;">
-      <h2>🚨 紧急情况判断</h2>
-      <div id="emergency-content" class="tab-placeholder">加载中...</div>
-    </section>
-
-  </main>
-
-  <!-- ===== Bottom Tab Bar (fixed) ===== -->
-  <nav id="bottom-nav" class="tab-bar">
-    <button class="tab-btn active" data-tab="home">
-      <span class="tab-icon">🏠</span>
-      <span class="tab-label">首页</span>
-    </button>
-    <button class="tab-btn" data-tab="feeding">
-      <span class="tab-icon">🍼</span>
-      <span class="tab-label">喂养</span>
-    </button>
-    <button class="tab-btn" data-tab="health">
-      <span class="tab-icon">🏥</span>
-      <span class="tab-label">健康</span>
-    </button>
-    <button class="tab-btn" data-tab="growth">
-      <span class="tab-icon">📚</span>
-      <span class="tab-label">成长</span>
-    </button>
-    <button class="tab-btn" data-tab="settings">
-      <span class="tab-icon">⚙️</span>
-      <span class="tab-label">设置</span>
-    </button>
-  </nav>
-
-  <!-- ===== Emergency Modal Overlay (hidden by default) ===== -->
-  <div id="emergency-modal" class="emergency-modal" style="display: none;" aria-hidden="true">
-    <div class="modal-container">
-      <button id="emergency-modal-close" class="emergency-close" aria-label="关闭">&times;</button>
-      <div id="emergency-modal-content" class="modal-body">
-        <h2>🚨 紧急情况判断指南</h2>
-        <div id="emergency-guide">加载中...</div>
-      </div>
+  <!-- ===== Welcome Overlay (first-time users) ===== -->
+  <div class="welcome-overlay" x-show="$store.ui.showWelcome">
+    <div class="welcome-card">
+      <h1 class="welcome-title">🐱 欢迎使用猫咪助手</h1>
+      <p class="welcome-subtitle">请填写猫咪信息，开始科学养育之旅</p>
+      <form @submit.prevent="
+        Actions.createCat({
+          name: $el.name.value,
+          birthday: $el.birthday.value,
+          breed: $el.breed.value,
+          gender: $el.gender.value,
+          weight_history: [{ date: new Date().toLocaleDateString('en-CA'), weight_g: parseInt($el.weight.value) || 0 }]
+        });
+      ">
+        <div class="form-group">
+          <label class="form-label">猫咪名字 *</label>
+          <input class="form-input" type="text" name="name" required placeholder="给猫咪取个名字" maxlength="30">
+        </div>
+        <div class="form-group">
+          <label class="form-label">生日 *</label>
+          <input class="form-input" type="date" name="birthday" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">品种</label>
+          <select class="form-select" name="breed">
+            <option value="中华田园猫">中华田园猫</option>
+            <option value="橘猫">橘猫</option>
+            <option value="狸花猫">狸花猫</option>
+            <option value="三花猫">三花猫</option>
+            <option value="奶牛猫">奶牛猫</option>
+            <option value="英短">英短</option>
+            <option value="美短">美短</option>
+            <option value="布偶">布偶</option>
+            <option value="缅因">缅因</option>
+            <option value="暹罗">暹罗</option>
+            <option value="波斯">波斯</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">性别 *</label>
+          <div style="display:flex;gap:12px;">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="radio" name="gender" value="公" required> 公 ♂
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="radio" name="gender" value="母" required> 母 ♀
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">体重（克）</label>
+          <input class="form-input" type="number" name="weight" placeholder="例如：300" min="50" max="15000">
+        </div>
+        <button class="btn btn-primary" type="submit">创建猫咪档案</button>
+      </form>
     </div>
   </div>
 
-  <!-- ===== Loading Overlay ===== -->
-  <div id="loading-overlay" class="loading-overlay">
-    <div class="spinner"></div>
-    <p class="loading-text">加载中...</p>
+  <!-- ===== Not Found State ===== -->
+  <div class="error-state" x-show="$store.ui.notFound">
+    <p style="font-size:48px;">😿</p>
+    <p style="font-size:18px;font-weight:600;margin-top:16px;">未找到猫咪</p>
+    <p style="color:var(--color-text-light);font-size:14px;margin-top:8px;">
+      分享码: <span x-text="$store.ui.notFound" style="font-weight:600;"></span>
+    </p>
+    <p style="color:var(--color-text-muted);font-size:13px;margin-top:4px;">请检查链接是否正确，或重新创建猫咪档案</p>
+    <button class="btn btn-primary mt-16" @click="window.location.href = window.location.pathname">返回首页</button>
   </div>
 
-  <!-- ===== 清除旧版 Service Worker（迁移到纯线上） ===== -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function (regs) {
-        for (var i = 0; i < regs.length; i++) {
-          regs[i].unregister();
-        }
-        // 清空所有缓存
-        if (window.caches) {
-          caches.keys().then(function (names) {
-            for (var j = 0; j < names.length; j++) caches.delete(names[j]);
-          });
-        }
-      });
-    }
-  </script>
+  <!-- ===== Main Content (shown when loaded and cat exists) ===== -->
+  <div x-show="!$store.app.loading && $store.app.cat && !$store.ui.notFound">
 
-  <!-- ===== Supabase SDK ===== -->
+    <!-- Emergency Header Strip -->
+    <a class="emergency-header" @click.prevent="Actions.switchTab('emergency')" href="#">
+      🚨 紧急情况？点此查看判断指南
+    </a>
+
+    <!-- ============================================================
+         TAB 1: 🏠 首页 (home)
+         ============================================================ -->
+    <section class="tab-content page" x-show="$store.app.currentTab === 'home'" x-transition>
+      <template x-if="$store.app.cat && $store.app.bundle">
+
+      <!-- Hero Cat Card -->
+      <div class="card cat-card" x-show="$store.app.cat">
+        <div class="cat-avatar">🐱</div>
+        <div class="cat-name" x-text="$store.app.cat.name"></div>
+        <div class="cat-meta">
+          <span x-text="$store.app.cat.breed"></span>
+          <span>·</span>
+          <span x-text="$store.app.cat.gender"></span>
+        </div>
+        <div class="cat-meta" x-show="$store.app.cat.weight_history && $store.app.cat.weight_history.length > 0">
+          体重: <span x-text="$store.app.cat.weight_history[$store.app.cat.weight_history.length - 1].weight_g + 'g'"></span>
+        </div>
+        <div class="cat-age-badge" x-show="$store.app.age">
+          <span x-text="$store.app.age.weeks + '周' + ($store.app.age.days > 0 ? $store.app.age.days + '天' : '')"></span>
+        </div>
+      </div>
+
+      <!-- Stage Alert -->
+      <div class="stage-alert" x-show="$store.app.cat && $store.app.bundle">
+        <span>⚠️</span>
+        <span x-text="Actions.stageAlertText($store.app.age, $store.app.bundle)"></span>
+      </div>
+
+      <!-- Daily Tasks Section -->
+      <div class="task-section-title" x-show="$store.tasks.daily.length > 0">
+        🔄 每日必做
+        <span class="badge badge-info" style="margin-left:6px;" x-text="$store.tasks.daily.length"></span>
+      </div>
+      <template x-for="task in $store.tasks.daily" :key="task.id">
+        <div class="task-item daily"
+          :class="{ done: task.status === 'done' }"
+          @click="Actions.toggleTask(task.id)">
+          <div class="task-checkbox" :class="{ checked: task.status === 'done' }"></div>
+          <span class="task-icon" x-text="task.icon"></span>
+          <div class="task-body" style="flex:1;">
+            <span class="task-name" x-text="task.name"></span>
+            <span class="task-desc text-small text-muted" x-show="task.status === 'done'">今日已完成 ✓</span>
+          </div>
+          <span class="task-time" x-show="task.time_of_day" x-text="task.time_of_day"></span>
+        </div>
+      </template>
+
+      <!-- Schedule Tasks Section -->
+      <div class="task-section-title" x-show="$store.tasks.schedule.length > 0">
+        📅 待完成事项
+        <span class="badge badge-warning" style="margin-left:6px;" x-text="$store.tasks.schedule.length"></span>
+      </div>
+      <template x-for="task in $store.tasks.schedule" :key="task.id">
+        <div class="task-item schedule"
+          :class="{ done: task.status === 'done' }"
+          @click="Actions.toggleTask(task.id)">
+          <div class="task-checkbox" :class="{ checked: task.status === 'done' }"></div>
+          <span class="task-icon" x-text="task.icon"></span>
+          <div class="task-body" style="flex:1;">
+            <span class="task-name" x-text="task.name"></span>
+            <span class="task-desc text-small text-muted" x-show="task.description" x-text="task.description"></span>
+          </div>
+        </div>
+      </template>
+
+      <!-- Periodic Tasks Section -->
+      <div class="task-section-title" x-show="$store.tasks.periodic.length > 0">
+        🔁 定期任务
+        <span class="badge" style="margin-left:6px;background:#F3E5F5;color:#8E44AD;" x-text="$store.tasks.periodic.length"></span>
+      </div>
+      <template x-for="task in $store.tasks.periodic" :key="task.id">
+        <div class="task-item periodic"
+          :class="{ overdue: task.status === 'overdue' }"
+          @click="Actions.toggleTask(task.id)">
+          <div class="task-checkbox" :class="{ checked: task.status === 'done' }"></div>
+          <span class="task-icon" x-text="task.icon"></span>
+          <div class="task-body" style="flex:1;">
+            <span class="task-name" x-text="task.name"></span>
+            <span class="task-desc text-small" x-show="task.status === 'overdue'" style="color:var(--color-danger);">已过期</span>
+          </div>
+          <span class="overdue-badge" x-show="task.status === 'overdue'">过期</span>
+        </div>
+      </template>
+
+      <!-- Done Items Section -->
+      <div class="task-section-title" x-show="$store.tasks.doneItems.length > 0">
+        ✅ 已完成
+      </div>
+      <template x-for="task in $store.tasks.doneItems" :key="task.id">
+        <div class="task-item done" @click="Actions.toggleTask(task.id)">
+          <div class="task-checkbox checked"></div>
+          <span class="task-icon" x-text="task.icon"></span>
+          <div class="task-body" style="flex:1;">
+            <span class="task-name" x-text="task.name"></span>
+            <span class="task-desc text-small text-muted" x-text="task.description"></span>
+          </div>
+        </div>
+      </template>
+
+      <!-- Empty State -->
+      <div class="empty-state" x-show="$store.tasks.daily.length === 0 && $store.tasks.schedule.length === 0 && $store.tasks.periodic.length === 0 && $store.tasks.doneItems.length === 0 && $store.app.cat">
+        今天没有待办任务 🎉
+      </div>
+      </template>
+
+    </section>
+
+    <!-- ============================================================
+         TAB 2: 🍼 喂养 (feeding)
+         ============================================================ -->
+    <section class="tab-content page" x-show="$store.app.currentTab === 'feeding'" x-transition>
+      <template x-if="$store.app.bundle">
+
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🍼 喂养指南</h2>
+
+      <!-- Current Feeding Plan -->
+      <div class="card" x-show="$store.app.bundle && $store.app.age">
+        <div class="card-header">📋 当前喂养方案</div>
+        <template x-for="stage in $store.app.bundle.feeding.stages.filter(function(s){return $store.app.age.weeks >= s.age_weeks[0] && $store.app.age.weeks <= s.age_weeks[1];})" :key="stage.stage">
+          <div>
+            <p style="font-weight:600;font-size:16px;margin-bottom:8px;" x-text="stage.stage"></p>
+            <p style="font-size:14px;margin-bottom:4px;">食物: <span x-text="stage.food" style="color:var(--color-orange-dark);"></span></p>
+            <p style="font-size:14px;margin-bottom:4px;">每日餐数: <span x-text="stage.meals_per_day + '顿'"></span></p>
+            <p style="font-size:14px;margin-bottom:4px;" x-show="stage.amount_per_meal_g">每餐份量: <span x-text="stage.amount_per_meal_g"></span></p>
+            <p style="font-size:14px;margin-bottom:4px;" x-show="stage.amount_per_meal_ml">每餐奶量: <span x-text="stage.amount_per_meal_ml + 'ml'"></span></p>
+            <p style="font-size:14px;margin-bottom:4px;">每日总量: <span x-text="stage.amount_daily"></span></p>
+            <p style="font-size:14px;margin-bottom:4px;">每日热量: <span x-text="stage.calories_daily + 'kcal'"></span></p>
+            <p style="font-size:13px;color:var(--color-text-light);margin-top:8px;line-height:1.6;" x-text="stage.notes"></p>
+            <div style="margin-top:8px;" x-show="stage.food_types && stage.food_types.length > 0">
+              <span style="font-size:13px;font-weight:600;">推荐产品:</span>
+              <ul style="font-size:13px;color:var(--color-text-light);padding-left:16px;margin-top:4px;">
+                <template x-for="ft in stage.food_types" :key="ft">
+                  <li x-text="ft"></li>
+                </template>
+              </ul>
+            </div>
+          </div>
+        </template>
+        <p style="font-size:13px;color:var(--color-text-muted);margin-top:12px;" x-show="$store.app.bundle.feeding.stages.filter(function(s){return $store.app.age.weeks >= s.age_weeks[0] && $store.app.age.weeks <= s.age_weeks[1];}).length === 0 && $store.app.age.weeks > 52">
+          猫咪已成年，请参考成猫喂养方案。每日2顿，体重×2%为每日总量。
+        </p>
+      </div>
+
+      <!-- Weaning Guide (age 3-8 weeks) -->
+      <div class="card" x-show="$store.app.age && $store.app.age.weeks >= 3 && $store.app.age.weeks <= 8 && $store.app.bundle">
+        <div class="card-header">🍽️ 断奶过渡指南</div>
+        <template x-for="(step, idx) in $store.app.bundle.feeding.weaning_guide.steps" :key="idx">
+          <p style="font-size:14px;margin-bottom:8px;line-height:1.6;" x-text="step"></p>
+        </template>
+        <div style="margin-top:12px;padding:12px;background:var(--color-orange-light);border-radius:var(--radius-btn);">
+          <p style="font-size:13px;font-weight:600;margin-bottom:6px;">💡 小贴士</p>
+          <template x-for="(tip, idx) in $store.app.bundle.feeding.weaning_guide.tips" :key="idx">
+            <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;" x-text="tip"></p>
+          </template>
+        </div>
+      </div>
+
+      <!-- Food Transition (collapsible) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-transition'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-transition')">
+          🔄 7天换粮法
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-transition']">
+          <p style="font-size:13px;color:var(--color-danger);font-weight:600;margin-bottom:8px;" x-text="$store.app.bundle.feeding.food_transition.warning"></p>
+          <template x-for="step in $store.app.bundle.feeding.food_transition.steps" :key="step.day">
+            <div style="display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--color-border);font-size:14px;">
+              <span style="min-width:50px;font-weight:600;" x-text="'第'+step.day+'天'"></span>
+              <span style="flex:1;font-size:13px;" x-text="'旧粮'+step.old_food_percent+'% + 新粮'+step.new_food_percent+'%'"></span>
+              <span style="font-size:12px;color:var(--color-text-light);" x-text="step.note"></span>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Forbidden Foods (collapsible) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-forbidden'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-forbidden')">
+          ⛔ 禁食清单
+          <span class="badge badge-danger" style="margin-left:6px;" x-text="$store.app.bundle.feeding.forbidden_foods.length + '种'"></span>
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-forbidden']">
+          <template x-for="item in $store.app.bundle.feeding.forbidden_foods" :key="item.food">
+            <div style="padding:10px 0;border-bottom:1px solid var(--color-border);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                <span style="font-weight:600;font-size:14px;" x-text="item.food"></span>
+                <span class="badge" :class="item.severity.includes('致命') ? 'badge-danger' : 'badge-warning'" x-text="item.severity"></span>
+              </div>
+              <p style="font-size:13px;color:var(--color-text-light);" x-text="item.reason"></p>
+              <p style="font-size:12px;color:var(--color-danger);margin-top:4px;" x-text="'⚠️ '+item.action"></p>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Water Guide -->
+      <div class="card" x-show="$store.app.bundle">
+        <div class="card-header">💧 饮水指南</div>
+        <p style="font-size:14px;margin-bottom:8px;">
+          每日饮水量: <span style="font-weight:600;color:var(--color-orange-dark);" x-text="$store.app.bundle.feeding.water_guide.daily_water_ml_per_kg + 'ml/kg'"></span>
+        </p>
+        <template x-for="tip in $store.app.bundle.feeding.water_guide.tips" :key="tip">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:6px;line-height:1.5;" x-text="'• ' + tip"></p>
+        </template>
+      </div>
+
+      </template>
+    </section>
+
+    <!-- ============================================================
+         TAB 3: 🏥 健康 (health)
+         ============================================================ -->
+    <section class="tab-content page" x-show="$store.app.currentTab === 'health'" x-transition>
+      <template x-if="$store.app.bundle">
+
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🏥 健康</h2>
+
+      <!-- Weight Records -->
+      <div class="card" x-show="$store.app.cat">
+        <div class="card-header">⚖️ 体重记录</div>
+        <div x-show="$store.app.cat.weight_history && $store.app.cat.weight_history.length > 0">
+          <template x-for="(rec, idx) in $store.app.cat.weight_history.slice().reverse().slice(0, 10)" :key="idx">
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-border);font-size:14px;">
+              <span x-text="rec.date"></span>
+              <span style="font-weight:600;" x-text="rec.weight_g + 'g'"></span>
+            </div>
+          </template>
+        </div>
+        <p class="text-muted text-small" x-show="!$store.app.cat.weight_history || $store.app.cat.weight_history.length === 0">暂无体重记录</p>
+        <form class="mt-12" @submit.prevent="Actions.addWeightRecord($el); $el.querySelector('input').value = ''" style="display:flex;gap:8px;">
+          <input class="form-input" type="number" placeholder="输入体重（克）" min="50" max="15000" style="flex:1;">
+          <button class="btn btn-primary" type="submit" style="width:auto;padding:12px 20px;">记录</button>
+        </form>
+        <div class="mt-12" x-show="$store.app.bundle && $store.app.age">
+          <p style="font-size:13px;font-weight:600;margin-bottom:4px;">参考标准（当前周龄）:</p>
+          <template x-for="std in $store.app.bundle.health.weight_standards.filter(function(s){return s.age_weeks <= $store.app.age.weeks;}).slice(-1)" :key="std.age_weeks">
+            <p style="font-size:13px;color:var(--color-text-light);" x-text="'正常范围: ' + std.min_weight_g + 'g - ' + std.max_weight_g + 'g (平均' + std.avg_weight_g + 'g). ' + (std.note || '')"></p>
+          </template>
+        </div>
+      </div>
+
+      <!-- Vaccination Timeline -->
+      <div class="card" x-show="$store.app.bundle">
+        <div class="card-header">💉 疫苗接种时间线</div>
+        <template x-for="vax in $store.app.bundle.health.vaccination" :key="vax.age_weeks">
+          <div class="timeline-item"
+            :class="{
+              done: $store.app.age && $store.app.age.weeks > vax.age_weeks,
+              current: $store.app.age && $store.app.age.weeks === vax.age_weeks,
+              future: $store.app.age && $store.app.age.weeks < vax.age_weeks
+            }">
+            <div>
+              <span style="font-size:14px;font-weight:600;" x-text="vax.vaccine + ' - 第' + vax.dose_number"></span>
+              <span style="font-size:12px;color:var(--color-text-light);margin-left:6px;" x-text="vax.age_weeks + '周龄'"></span>
+              <div style="font-size:13px;color:var(--color-text-light);margin-top:4px;">
+                预防: <span x-text="vax.protects_against.join('、')"></span>
+              </div>
+              <p style="font-size:12px;color:var(--color-text-muted);margin-top:4px;" x-text="vax.note"></p>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Deworming Timeline -->
+      <div class="card" x-show="$store.app.bundle">
+        <div class="card-header">🪱 驱虫时间线</div>
+        <template x-for="dw in $store.app.bundle.health.deworming" :key="dw.age_weeks">
+          <div class="timeline-item"
+            :class="{
+              done: $store.app.age && $store.app.age.weeks > dw.age_weeks,
+              current: $store.app.age && $store.app.age.weeks === dw.age_weeks,
+              future: $store.app.age && $store.app.age.weeks < dw.age_weeks
+            }">
+            <div>
+              <span style="font-size:14px;font-weight:600;" x-text="dw.type + ' - ' + dw.product_example"></span>
+              <span style="font-size:12px;color:var(--color-text-light);margin-left:6px;" x-text="dw.age_weeks + '周龄'"></span>
+              <div style="font-size:13px;color:var(--color-text-light);margin-top:4px;">
+                频率: <span x-text="dw.frequency"></span>
+              </div>
+              <p style="font-size:12px;color:var(--color-text-muted);margin-top:4px;" x-text="dw.note"></p>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Common Diseases (collapsible) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-diseases'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('health-diseases')">
+          🦠 常见疾病
+          <span class="badge badge-warning" style="margin-left:6px;" x-text="$store.app.bundle.health.common_diseases.length + '种'"></span>
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['health-diseases']">
+          <template x-for="disease in $store.app.bundle.health.common_diseases" :key="disease.name">
+            <div style="padding:12px 0;border-bottom:1px solid var(--color-border);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <span style="font-weight:600;font-size:14px;" x-text="disease.name"></span>
+                <span class="badge badge-info" x-text="disease.type"></span>
+                <span class="badge badge-danger" x-show="disease.mortality" style="font-size:10px;" x-text="'死亡率:'+disease.mortality"></span>
+              </div>
+              <p style="font-size:13px;margin-bottom:4px;"><strong>症状:</strong> <span x-text="disease.symptoms.join('、')"></span></p>
+              <p style="font-size:13px;margin-bottom:4px;"><strong>治疗:</strong> <span x-text="disease.treatment"></span></p>
+              <p style="font-size:13px;margin-bottom:4px;color:var(--color-success);"><strong>预防:</strong> <span x-text="disease.prevention"></span></p>
+              <p style="font-size:12px;color:var(--color-text-muted);" x-text="disease.note"></p>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Bathing Guide (collapsible) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-bathing'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('health-bathing')">
+          🛁 洗澡指南
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['health-bathing']">
+          <p style="font-size:13px;color:var(--color-danger);font-weight:600;margin-bottom:8px;">
+            安全年龄: <span x-text="$store.app.bundle.health.bathing_guide.safe_age_weeks + '周以上'"></span>
+          </p>
+          <p style="font-size:14px;font-weight:600;margin-bottom:4px;">8周以下风险:</p>
+          <template x-for="risk in $store.app.bundle.health.bathing_guide.risks_under_8_weeks" :key="risk">
+            <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;" x-text="'• ' + risk"></p>
+          </template>
+          <div style="margin-top:12px;">
+            <p style="font-size:14px;font-weight:600;margin-bottom:4px;">替代方案:</p>
+            <template x-for="alt in $store.app.bundle.health.bathing_guide.alternatives" :key="alt">
+              <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;" x-text="'• ' + alt"></p>
+            </template>
+          </div>
+          <div style="margin-top:12px;">
+            <p style="font-size:14px;font-weight:600;margin-bottom:4px;">安全洗澡步骤（8周+）:</p>
+            <template x-for="(step, idx) in $store.app.bundle.health.bathing_guide.safe_bathing_steps" :key="idx">
+              <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;" x-text="(idx+1)+'. ' + step"></p>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Eye Care -->
+      <div class="card" x-show="$store.app.bundle">
+        <div class="card-header">👁️ 眼部护理</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:4px;">清洁步骤:</p>
+        <template x-for="(step, idx) in $store.app.bundle.health.eye_care.cleaning_steps" :key="idx">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;" x-text="(idx+1)+'. ' + step"></p>
+        </template>
+        <p style="font-size:13px;color:var(--color-danger);font-weight:600;margin-top:8px;">需要就医的情况:</p>
+        <template x-for="item in $store.app.bundle.health.eye_care.vet_needed_if" :key="item">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
+        </template>
+      </div>
+
+    </section>
+      </template>
+
+    <!-- ============================================================
+         TAB 4: 📚 成长 (growth)
+         ============================================================ -->
+    <section class="tab-content page" x-show="$store.app.currentTab === 'growth'" x-transition>
+      <template x-if="$store.app.bundle">
+
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">📚 成长</h2>
+
+      <!-- Current Milestone -->
+      <div class="card" x-show="$store.app.bundle && $store.app.age">
+        <div class="card-header" x-text="'📌 ' + Actions.milestoneName($store.app.age, $store.app.bundle)"></div>
+        <template x-for="m in $store.app.bundle.milestones.milestones.filter(function(ms){return $store.app.age.weeks >= ms.age_weeks[0] && $store.app.age.weeks <= ms.age_weeks[1];})" :key="m.stage_name">
+          <div>
+            <p style="font-size:14px;line-height:1.6;margin-bottom:12px;" x-text="m.stage_description"></p>
+
+            <div x-show="m.physical_development && m.physical_development.length > 0">
+              <p style="font-size:14px;font-weight:600;margin-bottom:6px;">💪 身体发育</p>
+              <template x-for="item in m.physical_development" :key="item">
+                <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
+              </template>
+            </div>
+
+            <div x-show="m.skills_to_learn && m.skills_to_learn.length > 0" class="mt-12">
+              <p style="font-size:14px;font-weight:600;margin-bottom:6px;">🎓 应学技能</p>
+              <template x-for="skill in m.skills_to_learn" :key="skill.skill">
+                <div style="margin-bottom:8px;padding:10px;background:var(--color-orange-light);border-radius:var(--radius-btn);">
+                  <p style="font-size:14px;font-weight:600;" x-text="skill.skill"></p>
+                  <p style="font-size:13px;color:var(--color-text-light);margin-top:2px;" x-text="skill.detail"></p>
+                </div>
+              </template>
+            </div>
+
+            <div x-show="m.watch_out && m.watch_out.length > 0" class="mt-12">
+              <p style="font-size:14px;font-weight:600;margin-bottom:6px;color:var(--color-danger);">⚠️ 注意事项</p>
+              <template x-for="item in m.watch_out" :key="item">
+                <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
+              </template>
+            </div>
+
+            <div x-show="m.daily_tasks && m.daily_tasks.length > 0" class="mt-12">
+              <p style="font-size:14px;font-weight:600;margin-bottom:6px;">📋 每日任务</p>
+              <template x-for="dt in m.daily_tasks" :key="dt.task">
+                <div style="margin-bottom:6px;padding:8px;border-left:3px solid var(--color-orange);padding-left:12px;">
+                  <span style="font-size:14px;font-weight:600;" x-text="dt.task"></span>
+                  <span class="badge badge-danger" style="margin-left:4px;font-size:10px;" x-show="dt.mandatory">必须</span>
+                  <p style="font-size:13px;color:var(--color-text-light);margin-top:2px;" x-text="dt.detail"></p>
+                </div>
+              </template>
+            </div>
+
+            <div class="mt-12" x-show="m.care_note" style="padding:12px;background:var(--color-orange-light);border-radius:var(--radius-btn);">
+              <p style="font-size:13px;color:var(--color-orange-dark);" x-text="'💡 ' + m.care_note"></p>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Tutorials (collapsible) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-tutorials'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('growth-tutorials')">
+          🎓 训练教程大全
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['growth-tutorials']">
+          <template x-for="(tutorial, key) in $store.app.bundle.training.tutorials" :key="key">
+            <div style="padding:12px 0;border-bottom:1px solid var(--color-border);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                <span style="font-weight:600;font-size:14px;" x-text="tutorial.title"></span>
+                <span class="badge badge-info" x-text="tutorial.difficulty"></span>
+                <span style="font-size:12px;color:var(--color-text-muted);" x-text="tutorial.age_to_start_weeks + '周+可开始'"></span>
+              </div>
+              <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;" x-text="tutorial.estimated_time || ''"></p>
+              <p style="font-size:13px;margin-bottom:6px;" x-text="tutorial.preparation"></p>
+              <template x-for="(step, idx) in tutorial.steps" :key="idx">
+                <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="(idx+1)+'. ' + step"></p>
+              </template>
+              <div x-show="tutorial.common_mistakes && tutorial.common_mistakes.length > 0" style="margin-top:8px;padding:8px;background:#FDEDEC;border-radius:8px;">
+                <p style="font-size:12px;font-weight:600;color:var(--color-danger);margin-bottom:4px;">常见错误:</p>
+                <template x-for="mistake in tutorial.common_mistakes" :key="mistake">
+                  <p style="font-size:12px;color:var(--color-text-light);margin-bottom:2px;" x-text="mistake"></p>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Socialization Guide -->
+      <div class="card" x-show="$store.app.bundle">
+        <div class="card-header">🤝 社会化指南</div>
+        <p style="font-size:13px;color:var(--color-danger);font-weight:600;margin-bottom:8px;" x-text="'关键窗口: ' + $store.app.bundle.milestones.socialization_guide.critical_window"></p>
+        <p style="font-size:14px;font-weight:600;margin-bottom:4px;">需要社会化的事物:</p>
+        <template x-for="item in $store.app.bundle.milestones.socialization_guide.what_to_socialize" :key="item">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
+        </template>
+        <p style="font-size:14px;font-weight:600;margin-top:12px;margin-bottom:4px;">如何进行:</p>
+        <template x-for="item in $store.app.bundle.milestones.socialization_guide.how_to_socialize" :key="item">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
+        </template>
+      </div>
+
+    </section>
+
+      </template>
+    <!-- ============================================================
+         TAB 5: ⚙️ 设置 (settings)
+         ============================================================ -->
+    <section class="tab-content page" x-show="$store.app.currentTab === 'settings'" x-transition>
+      <template x-if="$store.app.cat">
+
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">⚙️ 设置</h2>
+
+      <!-- Cat Edit Form -->
+      <div class="card" x-show="$store.app.cat">
+        <div class="card-header">🐱 编辑猫咪信息</div>
+        <form @submit.prevent="Actions.submitSettingsForm($el); alert('保存成功！')">
+          <div class="form-group">
+            <label class="form-label">名字</label>
+            <input class="form-input" type="text" name="name" :value="$store.app.cat.name" maxlength="30">
+          </div>
+          <div class="form-group">
+            <label class="form-label">生日</label>
+            <input class="form-input" type="date" name="birthday" :value="$store.app.cat.birthday">
+          </div>
+          <div class="form-group">
+            <label class="form-label">品种</label>
+            <select class="form-select" name="breed" :value="$store.app.cat.breed">
+              <option value="中华田园猫">中华田园猫</option>
+              <option value="橘猫">橘猫</option>
+              <option value="狸花猫">狸花猫</option>
+              <option value="三花猫">三花猫</option>
+              <option value="奶牛猫">奶牛猫</option>
+              <option value="英短">英短</option>
+              <option value="美短">美短</option>
+              <option value="布偶">布偶</option>
+              <option value="缅因">缅因</option>
+              <option value="暹罗">暹罗</option>
+              <option value="波斯">波斯</option>
+              <option value="其他">其他</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">性别</label>
+            <div style="display:flex;gap:12px;">
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="radio" name="gender" value="公" :checked="$store.app.cat.gender === '公'"> 公 ♂
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="radio" name="gender" value="母" :checked="$store.app.cat.gender === '母'"> 母 ♀
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">保存修改</button>
+        </form>
+      </div>
+
+      <!-- Share Link -->
+      <div class="card" x-show="$store.app.shareKey">
+        <div class="card-header">🔗 分享链接</div>
+        <p style="font-size:13px;color:var(--color-text-light);margin-bottom:8px;">将此链接分享给家人，他们可以一起管理猫咪</p>
+        <div style="display:flex;gap:8px;">
+          <input class="form-input" type="text" readonly :value="window.location.origin + window.location.pathname + '?cat=' + $store.app.shareKey" style="flex:1;font-size:13px;" id="share-link-input">
+          <button class="btn btn-secondary" style="width:auto;padding:12px 16px;" @click="Actions.copyShareLink($el)">复制</button>
+        </div>
+      </div>
+
+      <!-- AI Chat Section -->
+      <div class="card" x-show="$store.app.cat && $store.app.bundle">
+        <div class="card-header">🤖 AI 养猫顾问 (DeepSeek)</div>
+
+        <!-- API Key Setup -->
+        <div x-show="!$store.ui.chatApiKey" style="margin-bottom:12px;">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:6px;">请先设置 DeepSeek API Key（<a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:var(--color-orange);">获取API Key</a>）</p>
+          <div style="display:flex;gap:8px;">
+            <input class="form-input" type="password" placeholder="sk-..." x-model="$store.ui.chatApiKey" style="flex:1;font-size:13px;">
+            <button class="btn btn-primary" style="width:auto;padding:10px 16px;font-size:13px;" @click="Actions.setChatApiKey($store.ui.chatApiKey)">保存</button>
+          </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="chat-container" x-show="$store.ui.chatApiKey">
+          <div class="chat-messages" id="chat-messages-container">
+            <template x-for="msg in $store.ui.chatMessages" :key="msg.id">
+              <div class="chat-msg" :class="msg.role" x-text="msg.content"></div>
+            </template>
+            <div x-show="$store.ui.chatMessages.length === 0" style="font-size:13px;color:var(--color-text-muted);text-align:center;padding:20px;">
+              向AI咨询猫咪养育问题
+            </div>
+            <div x-show="$store.ui.chatLoading" style="text-align:center;padding:8px;">
+              <span style="font-size:13px;color:var(--color-text-light);">AI思考中...</span>
+            </div>
+          </div>
+          <form class="chat-input-row" @submit.prevent="
+            let q = $store.ui.chatInput.trim();
+            if (q) { Actions.sendChatMessage(q); }
+            setTimeout(() => { let el = document.getElementById('chat-messages-container'); if (el) el.scrollTop = el.scrollHeight; }, 100);
+            }
+          ">
+            <input class="chat-input" type="text" placeholder="输入问题..." x-model="$store.ui.chatInput">
+            <button class="chat-send" type="submit" :disabled="$store.ui.chatLoading">发送</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- About Card -->
+      <div class="card">
+        <div class="card-header">ℹ️ 关于</div>
+        <p style="font-size:14px;margin-bottom:4px;"><strong>猫咪助手</strong></p>
+        <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;">版本: 2.0 (Alpine.js)</p>
+        <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;">科学喂养，健康长大 🐱</p>
+        <p style="font-size:12px;color:var(--color-text-muted);">
+          数据来源: 兽医文献 + 资深繁育人经验<br>
+          AI顾问: DeepSeek Chat API
+        </p>
+      </div>
+
+    </section>
+
+    <!-- ============================================================
+      </template>
+         TAB 6: 🆘 紧急 (emergency)
+         ============================================================ -->
+    <section class="tab-content page" x-show="$store.app.currentTab === 'emergency'" x-transition>
+      <template x-if="$store.app.bundle">
+
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🆘 紧急情况</h2>
+
+      <!-- Poison Helpline -->
+      <div class="card" x-show="$store.app.bundle" style="background:var(--color-danger-light);border:2px solid var(--color-danger);">
+        <div class="card-header" style="color:var(--color-danger);">📞 中毒求助热线</div>
+        <template x-for="(val, key) in $store.app.bundle.emergency.poison_helpline.china" :key="key">
+          <p style="font-size:14px;margin-bottom:4px;" x-text="key + ': ' + val"></p>
+        </template>
+        <p style="font-size:12px;color:var(--color-text-light);margin-top:4px;" x-text="$store.app.bundle.emergency.poison_helpline.note"></p>
+      </div>
+
+      <!-- When to See Vet Immediately -->
+      <div class="card" x-show="$store.app.bundle">
+        <div class="card-header">🚨 需要立即就医的情况</div>
+        <template x-for="item in $store.app.bundle.emergency.when_to_see_vet" :key="item.symptom">
+          <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['emergency-'+item.symptom] }">
+            <div class="collapsible-header" @click="Actions.toggleCollapsible('emergency-'+item.symptom)" style="font-size:14px;">
+              <span>
+                <span class="badge badge-danger" style="margin-right:6px;" x-text="item.urgency"></span>
+                <span x-text="item.symptom"></span>
+              </span>
+            </div>
+            <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['emergency-'+item.symptom]">
+              <p style="font-size:13px;margin-bottom:4px;"><strong>可能原因:</strong> <span x-text="item.possible_causes.join('、')"></span></p>
+              <p style="font-size:13px;margin-bottom:4px;color:var(--color-orange-dark);"><strong>应该做什么:</strong> <span x-text="item.what_to_do"></span></p>
+              <p style="font-size:13px;margin-bottom:4px;color:var(--color-danger);"><strong>不要做:</strong> <span x-text="item.what_not_to_do"></span></p>
+              <p style="font-size:12px;color:var(--color-text-muted);"><strong>送医途中:</strong> <span x-text="item.while_transporting"></span></p>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Stool Guide -->
+      <div class="card" x-show="$store.app.bundle">
+        <div class="card-header">💩 大便观察指南</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;color:var(--color-success);">正常:</p>
+        <template x-for="item in $store.app.bundle.emergency.stool_guide.normal" :key="item">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
+        </template>
+        <p style="font-size:14px;font-weight:600;margin-top:12px;margin-bottom:6px;color:var(--color-danger);">异常（需关注）:</p>
+        <template x-for="item in $store.app.bundle.emergency.stool_guide.abnormal" :key="item">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
+        </template>
+      </div>
+
+      <!-- First Aid Steps -->
+      <div class="card" x-show="$store.app.bundle">
+        <div class="card-header">⛑️ 急救步骤</div>
+        <template x-for="(fa, key) in $store.app.bundle.emergency.first_aid" :key="key">
+          <div style="padding:10px 0;border-bottom:1px solid var(--color-border);">
+            <p style="font-size:14px;font-weight:600;margin-bottom:6px;" x-text="fa.situation"></p>
+            <template x-for="(step, idx) in fa.steps" :key="idx">
+              <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="(idx+1)+'. ' + step"></p>
+            </template>
+            <p style="font-size:12px;color:var(--color-text-muted);margin-top:4px;" x-text="fa.when_to_stop"></p>
+          </div>
+        </template>
+      </div>
+
+      <!-- Emergency Kit Checklist -->
+      <div class="card" x-show="$store.app.bundle">
+        <div class="card-header">🧰 急救包清单</div>
+        <template x-for="item in $store.app.bundle.emergency.emergency_kit.items" :key="item">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;" x-text="'☐ ' + item"></p>
+        </template>
+      </div>
+
+      <!-- Vital Signs Reference -->
+      <div class="card" x-show="$store.app.bundle">
+        <div class="card-header">🩺 生命体征参考</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div style="padding:10px;background:var(--color-orange-light);border-radius:var(--radius-btn);">
+            <p style="font-size:12px;color:var(--color-text-light);">体温</p>
+            <p style="font-size:16px;font-weight:700;" x-text="$store.app.bundle.emergency.vital_signs.normal_temp"></p>
+          </div>
+          <div style="padding:10px;background:var(--color-orange-light);border-radius:var(--radius-btn);">
+            <p style="font-size:12px;color:var(--color-text-light);">心率</p>
+            <p style="font-size:16px;font-weight:700;" x-text="$store.app.bundle.emergency.vital_signs.normal_heart_rate"></p>
+          </div>
+          <div style="padding:10px;background:var(--color-orange-light);border-radius:var(--radius-btn);">
+            <p style="font-size:12px;color:var(--color-text-light);">呼吸率</p>
+            <p style="font-size:16px;font-weight:700;" x-text="$store.app.bundle.emergency.vital_signs.normal_respiratory_rate"></p>
+          </div>
+        </div>
+        <p style="font-size:13px;font-weight:600;margin-bottom:4px;">如何检查:</p>
+        <template x-for="item in $store.app.bundle.emergency.vital_signs.how_to_check" :key="item">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
+        </template>
+        <p style="font-size:13px;font-weight:600;margin-top:12px;margin-bottom:4px;color:var(--color-danger);">异常信号:</p>
+        <template x-for="item in $store.app.bundle.emergency.vital_signs.abnormal_signs" :key="item">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
+        </template>
+      </div>
+
+    </section>
+
+  </div><!-- /main content wrapper -->
+
+      </template>
+  <!-- ===== Bottom Navigation ===== -->
+  <nav class="tab-bar" x-show="!$store.app.loading && $store.app.cat && !$store.ui.notFound">
+    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'home' }" @click="Actions.switchTab('home')">
+      <span class="tab-icon">🏠</span>
+      <span>首页</span>
+    </button>
+    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'feeding' }" @click="Actions.switchTab('feeding')">
+      <span class="tab-icon">🍼</span>
+      <span>喂养</span>
+    </button>
+    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'health' }" @click="Actions.switchTab('health')">
+      <span class="tab-icon">🏥</span>
+      <span>健康</span>
+    </button>
+    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'growth' }" @click="Actions.switchTab('growth')">
+      <span class="tab-icon">📚</span>
+      <span>成长</span>
+    </button>
+    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'settings' }" @click="Actions.switchTab('settings')">
+      <span class="tab-icon">⚙️</span>
+      <span>设置</span>
+    </button>
+    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'emergency' }" @click="Actions.switchTab('emergency')">
+      <span class="tab-icon">🆘</span>
+      <span>紧急</span>
+    </button>
+  </nav>
+
+  <!-- ===== Script Loading Order ===== -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
-  <!-- ===== JavaScript Modules (load order matters) ===== -->
   <script src="js/utils.js"></script>
   <script src="js/data.js"></script>
   <script src="js/tasks.js"></script>
   <script src="js/ai.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/actions.js"></script>
+  <script>
+    document.addEventListener('alpine:init', function () {
+      Actions.init();
+    });
+  </script>
 
 </body>
 </html>
