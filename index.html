@@ -219,16 +219,16 @@
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'feeding'" x-transition>
       <template x-if="$store.app.bundle">
-      <h2 style=\"font-size:22px;font-weight:700;margin-bottom:16px;\">🍼 喂养指南</h2>
-      <div class=\"card\" x-show=\"$store.app.age\">
-        <div class=\"card-header\">📋 当前喂养方案 — <span x-text=\"$store.app.age.weeks\"></span>周龄</div>
-        <template x-for=\"s in $store.app.bundle.feeding.stages\" :key=\"s.stage\">
-          <div x-show=\"$store.app.age.weeks >= s.age_weeks[0] && $store.app.age.weeks <= s.age_weeks[1]\">
-            <p x-text=\"s.stage\" style=\"font-weight:600;\"></p>
-            <p>食物: <span x-text=\"s.food\"></span></p>
-            <p>每日餐次: <span x-text=\"s.meals_per_day + '顿'\"></span></p>
-            <p>每日总量: <span x-text=\"s.amount_daily\"></span></p>
-            <p x-text=\"s.notes\" style=\"font-size:13px;color:var(--color-text-light);\"></p>
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🍼 喂养指南</h2>
+      <div class="card" x-show="$store.app.age">
+        <div class="card-header">📋 当前喂养方案</div>
+        <template x-for="s in $store.app.bundle.feeding.stages" :key="s.stage">
+          <div x-show="$store.app.age.weeks >= s.age_weeks[0] && $store.app.age.weeks <= s.age_weeks[1]">
+            <p x-text="s.stage" style="font-weight:600;"></p>
+            <p>食物: <span x-text="s.food"></span></p>
+            <p>每日餐次: <span x-text="s.meals_per_day + '顿'"></span></p>
+            <p>每日总量: <span x-text="s.amount_daily"></span></p>
+            <p x-text="s.notes" style="font-size:13px;color:var(--color-text-light);"></p>
           </div>
         </template>
       </div>
