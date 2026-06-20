@@ -20,8 +20,7 @@ window.Actions = {
     var tasksStore = Alpine.store('tasks');
     var uiStore = Alpine.store('ui');
 
-    uiStore.loading = true;
-    appStore.loading = true;
+    // loading defaults are set in store.js (app:true, ui:false)
 
     // Restore persisted chat API key
     Actions.initChatKey();
@@ -112,6 +111,9 @@ window.Actions = {
     var appStore = Alpine.store('app');
     var tasksStore = Alpine.store('tasks');
 
+    // Guard: prevent double-tap race condition on same task
+    if (appStore._togglingTask === taskId) return;
+    appStore._togglingTask = taskId;
     appStore._lastToggleTime = Date.now();
 
     var ts = appStore.taskStatus;
@@ -188,6 +190,7 @@ window.Actions = {
       };
       if (appStore.currentTab === 'home') tasksStore.refresh();
     }
+    appStore._togglingTask = null;
   },
 
   /* ----------------------------------------------------------------

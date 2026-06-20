@@ -460,8 +460,8 @@
         </template>
       </div>
 
-    </section>
       </template>
+    </section>
 
     <!-- ============================================================
          TAB 4: 📚 成长 (growth)
@@ -563,9 +563,9 @@
         </template>
       </div>
 
+      </template>
     </section>
 
-      </template>
     <!-- ============================================================
          TAB 5: ⚙️ 设置 (settings)
          ============================================================ -->
@@ -678,10 +678,10 @@
         </p>
       </div>
 
+      </template>
     </section>
 
     <!-- ============================================================
-      </template>
          TAB 6: 🆘 紧急 (emergency)
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'emergency'" x-transition>
@@ -781,11 +781,10 @@
         </template>
       </div>
 
+      </template>
     </section>
 
   </div><!-- /main content wrapper -->
-
-      </template>
   <!-- ===== Bottom Navigation ===== -->
   <nav class="tab-bar" x-show="!$store.app.loading && $store.app.cat && !$store.ui.notFound">
     <button class="tab-btn" :class="{ active: $store.app.currentTab === 'home' }" @click="Actions.switchTab('home')">
