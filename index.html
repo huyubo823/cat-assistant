@@ -973,8 +973,8 @@
       <!-- Emergency Kit Checklist -->
       <div class="card">
         <div class="card-header">🧰 急救包清单</div>
-        <template x-for="item in $store.app.bundle.emergency.emergency_kit.items" :key="item">
-          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;" x-text="'☐ ' + item"></p>
+        <template x-for="item in $store.app.bundle.emergency.emergency_kit.items" :key="item.item">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;" x-text="'☐ ' + item.item"></p>
         </template>
       </div>
 
