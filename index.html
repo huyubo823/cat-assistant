@@ -621,6 +621,44 @@
         </template>
       </div>
 
+      <!-- Training Principles (collapsible) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-principles'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('growth-principles')">
+          📋 训练核心原则
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['growth-principles']">
+          <p style="font-size:14px;font-weight:600;margin-bottom:8px;" x-text="$store.app.bundle.training.training_principles.title"></p>
+          <template x-for="rule in $store.app.bundle.training.training_principles.rules" :key="rule">
+            <p style="font-size:13px;padding:4px 0 4px 12px;color:var(--color-text-light);" x-text="'• '+rule"></p>
+          </template>
+        </div>
+      </div>
+
+      <!-- Signs of Fear (collapsible) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-fear'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('growth-fear')">
+          😨 恐惧信号识别
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['growth-fear']">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:8px;">猫咪感到恐惧时会表现出以下信号：</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <template x-for="sign in $store.app.bundle.milestones.socialization_guide.signs_of_fear" :key="sign">
+              <span style="background:var(--color-danger-light);color:var(--color-danger);padding:4px 12px;border-radius:12px;font-size:13px;" x-text="sign"></span>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Missed Socialization Window (collapsible) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-missed'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('growth-missed')">
+          ⏰ 错过社会化窗口期？
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['growth-missed']">
+          <p style="font-size:14px;line-height:1.8;color:var(--color-text-light);" x-text="$store.app.bundle.milestones.socialization_guide.what_if_missed_window"></p>
+        </div>
+      </div>
+
       </template>
     </section>
 
