@@ -748,6 +748,10 @@
       <span class="tab-icon">📚</span>
       <span>成长</span>
     </button>
+    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'encyclopedia' }" @click="Actions.switchTab('encyclopedia')">
+      <span class="tab-icon">📖</span>
+      <span>百科</span>
+    </button>
     <button class="tab-btn" :class="{ active: $store.app.currentTab === 'settings' }" @click="Actions.switchTab('settings')">
       <span class="tab-icon">⚙️</span>
       <span>设置</span>
