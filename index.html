@@ -255,6 +255,67 @@
           <div class="card-header">💧 饮水指南</div>
           <p style="font-size:14px;">每日饮水量: <span style="font-weight:600;color:var(--sunrise);" x-text="$store.app.bundle.feeding.water_guide.daily_water_ml_per_kg + 'ml/kg'"></span></p>
         </div>
+        <!-- 7-Day Food Transition (collapsible) -->
+        <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-transition'] }" x-show="$store.app.bundle">
+          <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-transition')">
+            🔄 7天换粮法
+          </div>
+          <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-transition']">
+            <p style="font-size:13px;color:var(--color-text-light);margin-bottom:8px;" x-text="$store.app.bundle.feeding.food_transition.title"></p>
+            <template x-for="s in $store.app.bundle.feeding.food_transition.steps" :key="s.day">
+              <div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:14px;">
+                <span style="font-weight:700;min-width:32px;" x-text="'第'+s.day+'天'"></span>
+                <span style="flex:1;">旧粮 <b x-text="s.old_food_percent+'%'"></b> + 新粮 <b x-text="s.new_food_percent+'%'"></b></span>
+                <span style="font-size:12px;color:var(--color-text-light);" x-text="s.note"></span>
+              </div>
+            </template>
+            <p style="font-size:12px;color:var(--color-danger);margin-top:8px;padding:8px;background:var(--color-danger-light);border-radius:8px;" x-text="$store.app.bundle.feeding.food_transition.warning"></p>
+          </div>
+        </div>
+        <!-- Brand Compare (collapsible) -->
+        <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-brands'] }" x-show="$store.app.bundle">
+          <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-brands')">
+            🏷️ 品牌对比
+          </div>
+          <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-brands']">
+            <p style="font-size:14px;font-weight:600;margin-bottom:8px;">🍼 奶粉替代品</p>
+            <template x-for="b in $store.app.bundle.feeding.brand_compare.milk_replacers" :key="b.name">
+              <div style="margin-bottom:12px;padding:10px;background:var(--color-cream);border-radius:8px;">
+                <p style="font-weight:600;font-size:14px;" x-text="b.name"></p>
+                <p style="font-size:13px;color:var(--color-success);" x-text="'✅ '+b.pros"></p>
+                <p style="font-size:13px;color:var(--color-danger);" x-text="'⚠️ '+b.cons"></p>
+                <p style="font-size:12px;color:var(--color-text-light);" x-text="b.suitable_for"></p>
+              </div>
+            </template>
+            <p style="font-size:14px;font-weight:600;margin:12px 0 8px;">🥫 幼猫湿粮</p>
+            <template x-for="b in $store.app.bundle.feeding.brand_compare.kitten_wet_food" :key="b.name">
+              <div style="margin-bottom:12px;padding:10px;background:var(--color-cream);border-radius:8px;">
+                <p style="font-weight:600;font-size:14px;" x-text="b.name"></p>
+                <p style="font-size:13px;color:var(--color-success);" x-text="'✅ '+b.pros"></p>
+                <p style="font-size:13px;color:var(--color-danger);" x-text="'⚠️ '+b.cons"></p>
+                <p style="font-size:12px;color:var(--color-text-light);" x-text="b.suitable_for"></p>
+              </div>
+            </template>
+          </div>
+        </div>
+        <!-- Feeding Calculator (collapsible) -->
+        <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-calc'] }" x-show="$store.app.bundle">
+          <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-calc')">
+            🧮 喂食计算器
+          </div>
+          <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-calc']">
+            <p style="font-size:13px;color:var(--color-text-light);margin-bottom:8px;" x-text="$store.app.bundle.feeding.feeding_calculator.description"></p>
+            <p style="font-size:14px;font-weight:600;margin-bottom:8px;" x-text="$store.app.bundle.feeding.feeding_calculator.formula"></p>
+            <template x-for="(coef, age) in $store.app.bundle.feeding.feeding_calculator.coefficients" :key="age">
+              <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:14px;border-bottom:1px solid var(--color-border);">
+                <span x-text="age"></span>
+                <span style="font-weight:600;" x-text="typeof coef === 'number' ? coef.toFixed(3) : coef"></span>
+              </div>
+            </template>
+            <p style="font-size:12px;color:var(--color-text-light);margin-top:8px;" x-text="$store.app.bundle.feeding.feeding_calculator.wet_to_dry_ratio"></p>
+            <p style="font-size:12px;color:var(--color-text-light);margin-top:4px;font-style:italic;" x-text="$store.app.bundle.feeding.feeding_calculator.example"></p>
+          </div>
+        </div>
       </div>
       </template>
     </section>
