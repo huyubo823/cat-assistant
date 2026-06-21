@@ -663,7 +663,123 @@
     </section>
 
     <!-- ============================================================
-         TAB 5: ⚙️ 设置 (settings)
+         TAB 5: 📖 百科 (encyclopedia)
+         ============================================================ -->
+    <section class="tab-content" x-show="currentTab === 'encyclopedia'" x-transition>
+
+      <!-- Kitten Proofing (expanded - critical for new owners) -->
+      <div class="card" x-show="$store.app.bundle">
+        <div class="card-header">🐱 <span x-text="$store.app.bundle.encyclopedia.kitten_proofing.title"></span></div>
+        <template x-for="item in $store.app.bundle.encyclopedia.kitten_proofing.checklist" :key="item.item">
+          <div style="padding:10px 0;border-bottom:1px solid var(--color-border);">
+            <p style="font-weight:600;font-size:14px;" x-text="item.item"></p>
+            <p style="font-size:13px;color:var(--color-warning);margin-top:2px;" x-text="'风险: '+item.why"></p>
+            <p style="font-size:13px;color:var(--color-text-light);" x-text="'✅ '+item.how"></p>
+          </div>
+        </template>
+      </div>
+
+      <!-- Temperature & Humidity (expanded - basic knowledge) -->
+      <div class="card" x-show="$store.app.bundle">
+        <div class="card-header">🌡️ 温湿度指南</div>
+        <p style="font-size:14px;line-height:1.8;margin-bottom:8px;" x-text="$store.app.bundle.encyclopedia.temperature_humidity.ideal_temp_c"></p>
+        <p style="font-size:13px;font-weight:600;color:var(--sunrise-deep);margin-bottom:4px;">🐱 幼猫特殊需求：</p>
+        <template x-for="item in $store.app.bundle.encyclopedia.temperature_humidity.kitten_special" :key="item">
+          <p style="font-size:13px;padding:2px 0 2px 12px;color:var(--color-text-light);" x-text="'• '+item"></p>
+        </template>
+        <p style="font-size:13px;font-weight:600;color:var(--color-danger);margin:8px 0 4px;">❄️ 过冷信号：</p>
+        <template x-for="item in $store.app.bundle.encyclopedia.temperature_humidity.signs_too_cold" :key="item">
+          <p style="font-size:13px;padding:2px 0 2px 12px;" x-text="'• '+item"></p>
+        </template>
+        <p style="font-size:13px;font-weight:600;color:var(--color-warning);margin:8px 0 4px;">🔥 过热信号：</p>
+        <template x-for="item in $store.app.bundle.encyclopedia.temperature_humidity.signs_too_hot" :key="item">
+          <p style="font-size:13px;padding:2px 0 2px 12px;" x-text="'• '+item"></p>
+        </template>
+        <p style="font-size:13px;margin-top:8px;color:var(--color-text-light);" x-text="$store.app.bundle.encyclopedia.temperature_humidity.humidity"></p>
+      </div>
+
+      <!-- Toxic Plants (collapsible - reference) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-plants'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('encyclopedia-plants')">
+          🪴 <span x-text="$store.app.bundle.encyclopedia.toxic_plants.title"></span>
+          <span class="badge badge-danger" style="margin-left:8px;" x-text="$store.app.bundle.encyclopedia.toxic_plants.items.length + '种'"></span>
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-plants']">
+          <p style="font-size:12px;color:var(--color-danger);font-weight:600;margin-bottom:8px;padding:8px;background:var(--color-danger-light);border-radius:8px;" x-text="$store.app.bundle.encyclopedia.toxic_plants.critical_warning"></p>
+          <template x-for="plant in $store.app.bundle.encyclopedia.toxic_plants.items" :key="plant.name">
+            <div style="margin-bottom:10px;padding:10px;background:var(--color-cream);border-radius:8px;">
+              <p style="font-weight:600;font-size:14px;" x-text="plant.name"></p>
+              <p style="font-size:13px;color:var(--color-danger);" x-text="'☠️ '+plant.toxic_parts"></p>
+              <p style="font-size:13px;" x-text="'症状: '+plant.symptoms"></p>
+              <span class="badge badge-danger" x-text="plant.severity"></span>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Household Hazards (collapsible - reference) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-hazards'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('encyclopedia-hazards')">
+          🏚️ <span x-text="$store.app.bundle.encyclopedia.household_hazards.title"></span>
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-hazards']">
+          <template x-for="h in $store.app.bundle.encyclopedia.household_hazards.items" :key="h.item">
+            <div style="margin-bottom:10px;padding:10px;border-left:3px solid var(--color-warning);background:var(--color-cream);border-radius:0 8px 8px 0;">
+              <p style="font-weight:600;font-size:14px;" x-text="h.item"></p>
+              <p style="font-size:13px;color:var(--color-danger);" x-text="'⚠️ '+h.risk"></p>
+              <p style="font-size:13px;color:var(--color-success);" x-text="'✅ '+h.prevention"></p>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Litter Types (collapsible - reference) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-litter'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('encyclopedia-litter')">
+          🧻 <span x-text="$store.app.bundle.encyclopedia.litter_types.title"></span>
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-litter']">
+          <template x-for="lt in $store.app.bundle.encyclopedia.litter_types.items" :key="lt.type">
+            <div style="margin-bottom:12px;padding:10px;background:var(--color-cream);border-radius:8px;">
+              <p style="font-weight:600;font-size:14px;">
+                <span x-text="lt.type"></span>
+                <span class="badge badge-success" style="margin-left:6px;font-size:11px;" x-show="lt.suitable_for_kitten">幼猫适用</span>
+              </p>
+              <template x-for="pro in lt.pros" :key="pro">
+                <p style="font-size:13px;color:var(--color-success);padding:1px 0;" x-text="'✅ '+pro"></p>
+              </template>
+              <template x-for="con in lt.cons" :key="con">
+                <p style="font-size:13px;color:var(--color-danger);padding:1px 0;" x-text="'⚠️ '+con"></p>
+              </template>
+              <p style="font-size:12px;color:var(--color-text-light);margin-top:4px;" x-text="lt.notes"></p>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Forbidden Foods Detail (collapsible - detailed version) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-foods'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('encyclopedia-foods')">
+          🚫 <span x-text="$store.app.bundle.encyclopedia.forbidden_foods.title"></span>
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-foods']">
+          <template x-for="food in $store.app.bundle.encyclopedia.forbidden_foods.items" :key="food.food">
+            <div style="margin-bottom:10px;padding:10px;background:var(--color-cream);border-radius:8px;">
+              <p style="font-weight:600;font-size:14px;" x-text="food.food"></p>
+              <p style="font-size:12px;color:var(--color-text-muted);" x-text="food.category"></p>
+              <p style="font-size:13px;color:var(--color-danger);" x-text="'有毒成分: '+food.toxic_substance"></p>
+              <p style="font-size:13px;" x-text="'症状: '+food.symptoms"></p>
+              <span class="badge badge-danger" style="margin-top:4px;" x-text="food.severity"></span>
+              <p style="font-size:13px;font-weight:600;color:var(--sunrise-deep);margin-top:4px;" x-text="'🚑 '+food.action_if_ingested"></p>
+            </div>
+          </template>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================
+         TAB 6: ⚙️ 设置 (settings)
          ============================================================ -->
     <section class="tab-content page" x-show="$store.app.currentTab === 'settings'" x-transition>
       <template x-if="$store.app.cat">
