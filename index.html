@@ -256,7 +256,7 @@
           <p style="font-size:14px;">每日饮水量: <span style="font-weight:600;color:var(--sunrise);" x-text="$store.app.bundle.feeding.water_guide.daily_water_ml_per_kg + 'ml/kg'"></span></p>
         </div>
         <!-- 7-Day Food Transition (collapsible) -->
-        <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-transition'] }" x-show="$store.app.bundle">
+        <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-transition'] }">
           <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-transition')">
             🔄 7天换粮法
           </div>
@@ -273,7 +273,7 @@
           </div>
         </div>
         <!-- Brand Compare (collapsible) -->
-        <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-brands'] }" x-show="$store.app.bundle">
+        <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-brands'] }">
           <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-brands')">
             🏷️ 品牌对比
           </div>
@@ -299,7 +299,7 @@
           </div>
         </div>
         <!-- Feeding Calculator (collapsible) -->
-        <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-calc'] }" x-show="$store.app.bundle">
+        <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-calc'] }">
           <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-calc')">
             🧮 喂食计算器
           </div>
@@ -354,7 +354,7 @@
       </div>
 
       <!-- Vaccination Timeline -->
-      <div class="card" x-show="$store.app.bundle">
+      <div class="card">
         <div class="card-header">💉 疫苗接种时间线</div>
         <template x-for="vax in $store.app.bundle.health.vaccination" :key="vax.age_weeks">
           <div class="timeline-item"
@@ -376,7 +376,7 @@
       </div>
 
       <!-- Deworming Timeline -->
-      <div class="card" x-show="$store.app.bundle">
+      <div class="card">
         <div class="card-header">🪱 驱虫时间线</div>
         <template x-for="dw in $store.app.bundle.health.deworming" :key="dw.age_weeks">
           <div class="timeline-item"
@@ -398,7 +398,7 @@
       </div>
 
       <!-- Common Diseases (collapsible) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-diseases'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-diseases'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('health-diseases')">
           🦠 常见疾病
           <span class="badge badge-warning" style="margin-left:6px;" x-text="$store.app.bundle.health.common_diseases.length + '种'"></span>
@@ -421,7 +421,7 @@
       </div>
 
       <!-- Bathing Guide (collapsible) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-bathing'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-bathing'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('health-bathing')">
           🛁 洗澡指南
         </div>
@@ -449,7 +449,7 @@
       </div>
 
       <!-- Eye Care -->
-      <div class="card" x-show="$store.app.bundle">
+      <div class="card">
         <div class="card-header">👁️ 眼部护理</div>
         <p style="font-size:14px;font-weight:600;margin-bottom:4px;">清洁步骤:</p>
         <template x-for="(step, idx) in $store.app.bundle.health.eye_care.cleaning_steps" :key="idx">
@@ -462,7 +462,7 @@
       </div>
 
       <!-- Body Condition Score (collapsible) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-bcs'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-bcs'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('health-bcs')">
           📊 体况评分 (BCS)
         </div>
@@ -481,7 +481,7 @@
       </div>
 
       <!-- Checkup Schedule (collapsible) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-checkup'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-checkup'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('health-checkup')">
           📅 体检时间表
         </div>
@@ -498,7 +498,7 @@
       </div>
 
       <!-- Post-Bath Watch (collapsible) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-postbath'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-postbath'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('health-postbath')">
           ⚠️ 洗澡后观察
         </div>
@@ -579,7 +579,7 @@
       </div>
 
       <!-- Tutorials (collapsible) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-tutorials'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-tutorials'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('growth-tutorials')">
           🎓 训练教程大全
         </div>
@@ -608,7 +608,7 @@
       </div>
 
       <!-- Socialization Guide -->
-      <div class="card" x-show="$store.app.bundle">
+      <div class="card">
         <div class="card-header">🤝 社会化指南</div>
         <p style="font-size:13px;color:var(--color-danger);font-weight:600;margin-bottom:8px;" x-text="'关键窗口: ' + $store.app.bundle.milestones.socialization_guide.critical_window"></p>
         <p style="font-size:14px;font-weight:600;margin-bottom:4px;">需要社会化的事物:</p>
@@ -622,7 +622,7 @@
       </div>
 
       <!-- Training Principles (collapsible) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-principles'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-principles'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('growth-principles')">
           📋 训练核心原则
         </div>
@@ -635,7 +635,7 @@
       </div>
 
       <!-- Signs of Fear (collapsible) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-fear'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-fear'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('growth-fear')">
           😨 恐惧信号识别
         </div>
@@ -650,7 +650,7 @@
       </div>
 
       <!-- Missed Socialization Window (collapsible) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-missed'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-missed'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('growth-missed')">
           ⏰ 错过社会化窗口期？
         </div>
@@ -666,9 +666,11 @@
          TAB 5: 📖 百科 (encyclopedia)
          ============================================================ -->
     <section class="tab-content" x-show="$store.app.currentTab === 'encyclopedia'" x-transition>
+      <template x-if="$store.app.bundle">
+      <div>
 
       <!-- Kitten Proofing (expanded - critical for new owners) -->
-      <div class="card" x-show="$store.app.bundle">
+      <div class="card">
         <div class="card-header">🐱 <span x-text="$store.app.bundle.encyclopedia.kitten_proofing.title"></span></div>
         <template x-for="item in $store.app.bundle.encyclopedia.kitten_proofing.checklist" :key="item.item">
           <div style="padding:10px 0;border-bottom:1px solid var(--color-border);">
@@ -680,7 +682,7 @@
       </div>
 
       <!-- Temperature & Humidity (expanded - basic knowledge) -->
-      <div class="card" x-show="$store.app.bundle">
+      <div class="card">
         <div class="card-header">🌡️ 温湿度指南</div>
         <p style="font-size:14px;line-height:1.8;margin-bottom:8px;" x-text="$store.app.bundle.encyclopedia.temperature_humidity.ideal_temp_c"></p>
         <p style="font-size:13px;font-weight:600;color:var(--sunrise-deep);margin-bottom:4px;">🐱 幼猫特殊需求：</p>
@@ -699,7 +701,7 @@
       </div>
 
       <!-- Toxic Plants (collapsible - reference) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-plants'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-plants'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('encyclopedia-plants')">
           🪴 <span x-text="$store.app.bundle.encyclopedia.toxic_plants.title"></span>
           <span class="badge badge-danger" style="margin-left:8px;" x-text="$store.app.bundle.encyclopedia.toxic_plants.items.length + '种'"></span>
@@ -718,7 +720,7 @@
       </div>
 
       <!-- Household Hazards (collapsible - reference) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-hazards'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-hazards'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('encyclopedia-hazards')">
           🏚️ <span x-text="$store.app.bundle.encyclopedia.household_hazards.title"></span>
         </div>
@@ -734,7 +736,7 @@
       </div>
 
       <!-- Litter Types (collapsible - reference) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-litter'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-litter'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('encyclopedia-litter')">
           🧻 <span x-text="$store.app.bundle.encyclopedia.litter_types.title"></span>
         </div>
@@ -758,7 +760,7 @@
       </div>
 
       <!-- Forbidden Foods Detail (collapsible - detailed version) -->
-      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-foods'] }" x-show="$store.app.bundle">
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-foods'] }">
         <div class="collapsible-header" @click="Actions.toggleCollapsible('encyclopedia-foods')">
           🚫 <span x-text="$store.app.bundle.encyclopedia.forbidden_foods.title"></span>
         </div>
@@ -775,6 +777,9 @@
           </template>
         </div>
       </div>
+
+      </div>
+      </template>
 
     </section>
 
@@ -892,6 +897,9 @@
       </div>
 
       </template>
+      </div>
+      </template>
+
     </section>
 
     <!-- ============================================================
@@ -904,14 +912,14 @@
       <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🆘 紧急情况</h2>
 
       <!-- Poison Helpline -->
-      <div class="card" x-show="$store.app.bundle" style="background:var(--color-danger-light);border:2px solid var(--color-danger);">
+      <div class="card" style="background:var(--color-danger-light);border:2px solid var(--color-danger);">
         <div class="card-header" style="color:var(--color-danger);">📞 中毒求助热线</div>
         <p style="font-size:14px;margin-bottom:4px;" x-text="$store.app.bundle.emergency.poison_helpline.china"></p>
         <p style="font-size:12px;color:var(--color-text-light);margin-top:4px;" x-text="$store.app.bundle.emergency.poison_helpline.note"></p>
       </div>
 
       <!-- When to See Vet Immediately -->
-      <div class="card" x-show="$store.app.bundle">
+      <div class="card">
         <div class="card-header">🚨 需要立即就医的情况</div>
         <template x-for="item in $store.app.bundle.emergency.when_to_see_vet" :key="item.symptom">
           <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['emergency-'+item.symptom] }">
@@ -932,7 +940,7 @@
       </div>
 
       <!-- Stool Guide -->
-      <div class="card" x-show="$store.app.bundle">
+      <div class="card">
         <div class="card-header">💩 大便观察指南</div>
         <p style="font-size:14px;font-weight:600;margin-bottom:6px;color:var(--color-success);">正常:</p>
         <template x-for="(val, key) in $store.app.bundle.emergency.stool_guide.normal" :key="key">
@@ -949,7 +957,7 @@
       </div>
 
       <!-- First Aid Steps -->
-      <div class="card" x-show="$store.app.bundle">
+      <div class="card">
         <div class="card-header">⛑️ 急救步骤</div>
         <template x-for="(fa, key) in $store.app.bundle.emergency.first_aid" :key="key">
           <div style="padding:10px 0;border-bottom:1px solid var(--color-border);">
@@ -963,7 +971,7 @@
       </div>
 
       <!-- Emergency Kit Checklist -->
-      <div class="card" x-show="$store.app.bundle">
+      <div class="card">
         <div class="card-header">🧰 急救包清单</div>
         <template x-for="item in $store.app.bundle.emergency.emergency_kit.items" :key="item">
           <p style="font-size:13px;color:var(--color-text-light);margin-bottom:4px;" x-text="'☐ ' + item"></p>
@@ -971,7 +979,7 @@
       </div>
 
       <!-- Vital Signs Reference -->
-      <div class="card" x-show="$store.app.bundle">
+      <div class="card">
         <div class="card-header">🩺 生命体征参考</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
           <div style="padding:10px;background:var(--color-orange-light);border-radius:var(--radius-btn);">
