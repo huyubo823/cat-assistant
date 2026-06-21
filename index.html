@@ -460,6 +460,62 @@
           <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="'• ' + item"></p>
         </template>
       </div>
+
+      <!-- Body Condition Score (collapsible) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-bcs'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('health-bcs')">
+          📊 体况评分 (BCS)
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['health-bcs']">
+          <p style="font-size:13px;color:var(--color-text-light);margin-bottom:8px;">
+            <span x-text="$store.app.bundle.health.body_condition_score.scale"></span> · <span x-text="$store.app.bundle.health.body_condition_score.description"></span>
+          </p>
+          <template x-for="s in $store.app.bundle.health.body_condition_score.scores" :key="s.score">
+            <div style="margin-bottom:10px;padding:10px;border-left:3px solid var(--color-warning);background:var(--color-cream);border-radius:0 8px 8px 0;">
+              <p style="font-weight:600;font-size:14px;"><span x-text="s.score + '分'"></span> <span x-text="s.label"></span></p>
+              <p style="font-size:13px;color:var(--color-text-light);" x-text="s.description"></p>
+              <p style="font-size:13px;font-weight:600;color:var(--sunrise-deep);" x-text="s.action"></p>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Checkup Schedule (collapsible) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-checkup'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('health-checkup')">
+          📅 体检时间表
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['health-checkup']">
+          <template x-for="c in $store.app.bundle.health.checkup_schedule" :key="c.age">
+            <div style="margin-bottom:10px;">
+              <p style="font-weight:600;font-size:14px;margin-bottom:4px;" x-text="c.age"></p>
+              <template x-for="item in c.items" :key="item">
+                <p style="font-size:13px;color:var(--color-text-light);padding:2px 0 2px 12px;" x-text="'• '+item"></p>
+              </template>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Post-Bath Watch (collapsible) -->
+      <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-postbath'] }" x-show="$store.app.bundle">
+        <div class="collapsible-header" @click="Actions.toggleCollapsible('health-postbath')">
+          ⚠️ 洗澡后观察
+        </div>
+        <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['health-postbath']">
+          <p style="font-size:14px;font-weight:600;margin-bottom:6px;" x-text="$store.app.bundle.health.bathing_guide.if_already_bathed.title"></p>
+          <p style="font-size:13px;font-weight:600;color:var(--color-warning);margin-bottom:4px;">观察以下迹象：</p>
+          <template x-for="sign in $store.app.bundle.health.bathing_guide.if_already_bathed.watch_signs" :key="sign">
+            <p style="font-size:13px;padding:3px 0 3px 12px;" x-text="'• '+sign"></p>
+          </template>
+          <p style="font-size:13px;font-weight:600;color:var(--color-danger);margin:8px 0 4px;">紧急就医信号：</p>
+          <template x-for="emergency in $store.app.bundle.health.bathing_guide.if_already_bathed.emergency_if" :key="emergency">
+            <p style="font-size:13px;padding:3px 0 3px 12px;color:var(--color-danger);" x-text="'🚨 '+emergency"></p>
+          </template>
+          <p style="font-size:13px;margin-top:8px;padding:8px;background:var(--sunrise-light);border-radius:8px;" x-text="$store.app.bundle.health.bathing_guide.if_already_bathed.current_action"></p>
+        </div>
+      </div>
+
       </div>
       </template>
     </section>
