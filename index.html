@@ -876,7 +876,6 @@
             let q = $store.ui.chatInput.trim();
             if (q) { Actions.sendChatMessage(q); }
             setTimeout(() => { let el = document.getElementById('chat-messages-container'); if (el) el.scrollTop = el.scrollHeight; }, 100);
-            }
           ">
             <input class="chat-input" type="text" placeholder="输入问题..." x-model="$store.ui.chatInput">
             <button class="chat-send" type="submit" :disabled="$store.ui.chatLoading">发送</button>
