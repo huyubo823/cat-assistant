@@ -69,6 +69,11 @@
   --color-warning: var(--warning);
   --radius-card: var(--radius-lg);
   --radius-btn: var(--radius-md);
+
+  /* New design-audit tokens */
+  --periodic: #8E44AD;
+  --periodic-light: #F3E5F5;
+  --sunrise-hover: #FFE8D6;
 }
 
 /* ---------------------------------------------------------------
@@ -265,7 +270,7 @@ a.card:hover,
 }
 
 .cat-stat-label {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-secondary);
   margin-top: 2px;
 }
@@ -313,7 +318,7 @@ a.card:hover,
   border-radius: var(--radius-sm);
   background: var(--sunrise-light);
   color: var(--sunrise-deep);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0;
 }
@@ -328,8 +333,9 @@ a.card:hover,
   background: var(--white);
   border-radius: var(--radius-md);
   margin-bottom: 6px;
-  box-shadow: var(--shadow-sm), inset 4px 0 0 var(--task-type-color, var(--sunrise));
-  transition: all 0.2s var(--ease-soft);
+  box-shadow: var(--shadow-sm);
+  border-top: 3px solid var(--task-type-color, var(--sunrise));
+  transition: box-shadow 0.2s var(--ease-soft), opacity 0.2s var(--ease-soft);
   cursor: pointer;
 }
 
@@ -347,16 +353,16 @@ a.card:hover,
 }
 
 .task-item.periodic {
-  --task-type-color: #8E44AD;
+  --task-type-color: var(--periodic);
 }
 
 /* ---------------------------------------------------------------
    10. Task Checkbox
    --------------------------------------------------------------- */
 .task-checkbox {
-  width: 26px;
-  height: 26px;
-  min-width: 26px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
   border: 2px solid var(--border);
   border-radius: 50%;
   margin-right: var(--space-sm);
@@ -364,7 +370,7 @@ a.card:hover,
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s var(--ease-soft);
+  transition: background 0.2s var(--ease-soft), border-color 0.2s var(--ease-soft), box-shadow 0.2s var(--ease-soft);
   background: var(--white);
 }
 
@@ -378,7 +384,7 @@ a.card:hover,
 .task-checkbox.checked::after {
   content: '\2713';
   color: var(--white);
-  font-size: 15px;
+  font-size: 22px;
   font-weight: 700;
   line-height: 1;
 }
@@ -435,7 +441,7 @@ a.card:hover,
 }
 
 .overdue-badge {
-  font-size: 11px;
+  font-size: 12px;
   background: var(--danger);
   color: var(--white);
   padding: 2px 8px;
@@ -484,7 +490,7 @@ a.card:hover,
   font-weight: 600;
   font-family: var(--font-body);
   cursor: pointer;
-  transition: all 0.2s var(--ease-soft);
+  transition: background 0.2s var(--ease-soft), box-shadow 0.2s var(--ease-soft), transform 0.2s var(--ease-soft);
   text-align: center;
   text-decoration: none;
   box-shadow: var(--shadow-sm);
@@ -518,7 +524,7 @@ a.card:hover,
 }
 
 .btn-secondary:hover {
-  background: #FFE8D6;
+  background: var(--sunrise-hover);
 }
 
 .btn-danger {
@@ -541,6 +547,15 @@ a.card:hover,
   background: var(--sunrise-light);
 }
 
+.btn:focus-visible,
+.tab-btn:focus-visible,
+.collapsible-header:focus-visible,
+.task-item:focus-visible,
+.chat-send:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
 /* ---------------------------------------------------------------
    15. Bottom Navigation (fixed, 6 tabs)
    --------------------------------------------------------------- */
@@ -554,8 +569,9 @@ a.card:hover,
   display: flex;
   background: var(--white);
   border-top: 1px solid var(--border);
-  z-index: 100;
+  z-index: 110;
   padding: 6px 0 env(safe-area-inset-bottom, 6px);
+  background: rgba(255,255,255,0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -571,7 +587,7 @@ a.card:hover,
   background: none;
   cursor: pointer;
   color: var(--ink-secondary);
-  font-size: 11px;
+  font-size: 12px;
   font-family: var(--font-body);
   transition: color 0.2s var(--ease-soft);
   gap: 2px;
@@ -584,7 +600,7 @@ a.card:hover,
 }
 
 .tab-btn .tab-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -637,6 +653,26 @@ a.card:hover,
   border-color: var(--danger);
   box-shadow: 0 0 0 3px var(--danger-light);
 }
+
+.form-input:focus-visible,
+.form-select:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
+.form-input:disabled,
+.form-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--color-border);
+}
+.form-input::placeholder,
+.form-select::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.form-input[readonly] { background: var(--color-cream); cursor: default; }
 
 .form-select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23888888' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
@@ -756,7 +792,7 @@ a.card:hover,
   position: absolute;
   left: -7px;
   top: 13px;
-  transition: all 0.2s var(--ease-soft);
+  transition: background 0.2s var(--ease-soft), box-shadow 0.2s var(--ease-soft);
 }
 
 .timeline-item.current::before {
@@ -801,7 +837,7 @@ a.card:hover,
 
 .chat-messages {
   padding: var(--space-sm);
-  max-height: 300px;
+  max-height: min(300px, calc(100vh - 350px));
   overflow-y: auto;
   background: var(--cream);
   display: flex;
@@ -824,6 +860,7 @@ a.card:hover,
   color: var(--white);
   margin-left: auto;
   border-bottom-right-radius: 4px;
+  font-weight: 600;
 }
 
 .chat-msg.assistant {
@@ -844,6 +881,7 @@ a.card:hover,
 .chat-input {
   flex: 1;
   padding: 10px 14px;
+  min-height: 44px;
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   font-size: 14px;
@@ -866,8 +904,8 @@ a.card:hover,
   font-weight: 600;
   font-family: var(--font-body);
   cursor: pointer;
-  transition: all 0.2s var(--ease-soft);
-}
+  transition: background 0.2s var(--ease-soft), transform 0.2s var(--ease-soft), box-shadow 0.2s var(--ease-soft);
+  min-height: 44px;
 
 .chat-send:hover {
   background: var(--sunrise-deep);
@@ -1104,6 +1142,8 @@ a.card:hover,
   font-weight: 700;
 }
 
+.page-title { font-size: 22px; font-weight: 700; margin-bottom: 16px; }
+
 .flex-row {
   display: flex;
   align-items: center;
@@ -1144,6 +1184,16 @@ a.card:hover,
   }
 
   .tab-bar {
-    box-shadow: 0 -1px 8px rgba(0,0,0,0.04);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

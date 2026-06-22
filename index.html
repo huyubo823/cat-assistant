@@ -2,14 +2,16 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#FFFAF5">
+  <meta name="color-scheme" content="light">
   <meta name="description" content="猫咪助手 - 科学喂养、健康管理、成长记录">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="猫咪助手">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" href="icon-192.png">
   <link rel="stylesheet" href="css/styles.css">
   <title>猫咪助手</title>
 
@@ -48,16 +50,16 @@
         });
       ">
         <div class="form-group">
-          <label class="form-label">猫咪名字 *</label>
-          <input class="form-input" type="text" name="name" required placeholder="给猫咪取个名字" maxlength="30">
+          <label class="form-label" for="cat-name">猫咪名字 *</label>
+          <input class="form-input" id="cat-name" type="text" name="name" required placeholder="给猫咪取个名字" maxlength="30">
         </div>
         <div class="form-group">
-          <label class="form-label">生日 *</label>
-          <input class="form-input" type="date" name="birthday" required>
+          <label class="form-label" for="cat-birthday">生日 *</label>
+          <input class="form-input" id="cat-birthday" type="date" name="birthday" required>
         </div>
         <div class="form-group">
-          <label class="form-label">品种</label>
-          <select class="form-select" name="breed">
+          <label class="form-label" for="cat-breed">品种</label>
+          <select class="form-select" id="cat-breed" name="breed">
             <option value="中华田园猫">中华田园猫</option>
             <option value="橘猫">橘猫</option>
             <option value="狸花猫">狸花猫</option>
@@ -84,8 +86,8 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">体重（克）</label>
-          <input class="form-input" type="number" name="weight" placeholder="例如：300" min="50" max="15000">
+          <label class="form-label" for="cat-weight">体重（克）</label>
+          <input class="form-input" id="cat-weight" type="number" name="weight" placeholder="例如：300" min="50" max="15000">
         </div>
         <button class="btn btn-primary" type="submit">创建猫咪档案</button>
       </form>
@@ -100,16 +102,17 @@
       分享码: <span x-text="$store.ui.notFound" style="font-weight:600;"></span>
     </p>
     <p style="color:var(--color-text-muted);font-size:13px;margin-top:4px;">请检查链接是否正确，或重新创建猫咪档案</p>
-    <button class="btn btn-primary mt-16" @click="window.location.href = window.location.pathname">返回首页</button>
+    <button class="btn btn-primary mt-16" type="button" @click="window.location.href = window.location.pathname">返回首页</button>
   </div>
 
   <!-- ===== Main Content (shown when loaded and cat exists) ===== -->
-  <div x-show="!$store.app.loading && $store.app.cat && !$store.ui.notFound">
+  <main x-show="!$store.app.loading && $store.app.cat && !$store.ui.notFound" aria-label="主要内容">
+    <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">猫咪助手</h1>
 
     <!-- ============================================================
          TAB 1: 🏠 首页 (home)
          ============================================================ -->
-    <section class="tab-content page" x-show="$store.app.currentTab === 'home'" x-transition>
+    <section class="tab-content page" role="tabpanel" x-show="$store.app.currentTab === 'home'" x-transition>
       <template x-if="$store.app.cat">
       <div>
 
@@ -142,9 +145,9 @@
         <span class="badge badge-info" style="margin-left:6px;" x-text="$store.tasks.daily.length"></span>
       </div>
       <template x-for="task in $store.tasks.daily" :key="task.id">
-        <div class="task-item daily"
+        <div class="task-item daily" role="button" tabindex="0"
           :class="{ done: task.status === 'done' }"
-          @click="Actions.toggleTask(task.id)">
+          @click="Actions.toggleTask(task.id)" @keydown.enter="Actions.toggleTask(task.id)" @keydown.space.prevent="Actions.toggleTask(task.id)">
           <div class="task-checkbox" :class="{ checked: task.status === 'done' }"></div>
           <span class="task-icon" x-text="task.icon"></span>
           <div class="task-body" style="flex:1;">
@@ -161,9 +164,9 @@
         <span class="badge badge-warning" style="margin-left:6px;" x-text="$store.tasks.schedule.length"></span>
       </div>
       <template x-for="task in $store.tasks.schedule" :key="task.id">
-        <div class="task-item schedule"
+        <div class="task-item schedule" role="button" tabindex="0"
           :class="{ done: task.status === 'done' }"
-          @click="Actions.toggleTask(task.id)">
+          @click="Actions.toggleTask(task.id)" @keydown.enter="Actions.toggleTask(task.id)" @keydown.space.prevent="Actions.toggleTask(task.id)">
           <div class="task-checkbox" :class="{ checked: task.status === 'done' }"></div>
           <span class="task-icon" x-text="task.icon"></span>
           <div class="task-body" style="flex:1;">
@@ -176,12 +179,12 @@
       <!-- Periodic Tasks Section -->
       <div class="task-section-title" x-show="$store.tasks.periodic.length > 0">
         🔁 定期任务
-        <span class="badge" style="margin-left:6px;background:#F3E5F5;color:#8E44AD;" x-text="$store.tasks.periodic.length"></span>
+        <span class="badge" style="margin-left:6px;background:var(--periodic-light);color:var(--periodic);" x-text="$store.tasks.periodic.length"></span>
       </div>
       <template x-for="task in $store.tasks.periodic" :key="task.id">
-        <div class="task-item periodic"
+        <div class="task-item periodic" role="button" tabindex="0"
           :class="{ overdue: task.status === 'overdue' }"
-          @click="Actions.toggleTask(task.id)">
+          @click="Actions.toggleTask(task.id)" @keydown.enter="Actions.toggleTask(task.id)" @keydown.space.prevent="Actions.toggleTask(task.id)">
           <div class="task-checkbox" :class="{ checked: task.status === 'done' }"></div>
           <span class="task-icon" x-text="task.icon"></span>
           <div class="task-body" style="flex:1;">
@@ -197,7 +200,7 @@
         ✅ 已完成
       </div>
       <template x-for="task in $store.tasks.doneItems" :key="task.id">
-        <div class="task-item done" @click="Actions.toggleTask(task.id)">
+        <div class="task-item done" role="button" tabindex="0" @click="Actions.toggleTask(task.id)" @keydown.enter="Actions.toggleTask(task.id)" @keydown.space.prevent="Actions.toggleTask(task.id)">
           <div class="task-checkbox checked"></div>
           <span class="task-icon" x-text="task.icon"></span>
           <div class="task-body" style="flex:1;">
@@ -219,10 +222,10 @@
     <!-- ============================================================
          TAB 2: 🍼 喂养 (feeding)
          ============================================================ -->
-    <section class="tab-content page" x-show="$store.app.currentTab === 'feeding'" x-transition>
+    <section class="tab-content page" role="tabpanel" x-show="$store.app.currentTab === 'feeding'" x-transition>
       <template x-if="$store.app.bundle">
       <div>
-        <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🍼 喂养指南</h2>
+        <h2 class="page-title">🍼 喂养指南</h2>
         <div class="card" x-show="$store.app.age">
           <div class="card-header">📋 当前喂养方案</div>
           <template x-for="s in $store.app.bundle.feeding.stages" :key="s.stage">
@@ -257,7 +260,7 @@
         </div>
         <!-- 7-Day Food Transition (collapsible) -->
         <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-transition'] }">
-          <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-transition')">
+          <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-transition']" @click="Actions.toggleCollapsible('feeding-transition')" @keydown.enter="Actions.toggleCollapsible('feeding-transition')" @keydown.space.prevent="Actions.toggleCollapsible('feeding-transition')">
             🔄 7天换粮法
           </div>
           <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-transition']">
@@ -274,7 +277,7 @@
         </div>
         <!-- Brand Compare (collapsible) -->
         <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-brands'] }">
-          <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-brands')">
+          <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-brands']" @click="Actions.toggleCollapsible('feeding-brands')" @keydown.enter="Actions.toggleCollapsible('feeding-brands')" @keydown.space.prevent="Actions.toggleCollapsible('feeding-brands')">
             🏷️ 品牌对比
           </div>
           <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-brands']">
@@ -300,7 +303,7 @@
         </div>
         <!-- Feeding Calculator (collapsible) -->
         <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['feeding-calc'] }">
-          <div class="collapsible-header" @click="Actions.toggleCollapsible('feeding-calc')">
+          <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-calc']" @click="Actions.toggleCollapsible('feeding-calc')" @keydown.enter="Actions.toggleCollapsible('feeding-calc')" @keydown.space.prevent="Actions.toggleCollapsible('feeding-calc')">
             🧮 喂食计算器
           </div>
           <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['feeding-calc']">
@@ -323,11 +326,11 @@
     <!-- ============================================================
          TAB 3: 🏥 健康 (health)
          ============================================================ -->
-    <section class="tab-content page" x-show="$store.app.currentTab === 'health'" x-transition>
+    <section class="tab-content page" role="tabpanel" x-show="$store.app.currentTab === 'health'" x-transition>
       <template x-if="$store.app.bundle">
       <div>
 
-      <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🏥 健康</h2>
+      <h2 class="page-title">🏥 健康</h2>
 
       <!-- Weight Records -->
       <div class="card" x-show="$store.app.cat">
@@ -399,7 +402,7 @@
 
       <!-- Common Diseases (collapsible) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-diseases'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('health-diseases')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['health-diseases']" @click="Actions.toggleCollapsible('health-diseases')" @keydown.enter="Actions.toggleCollapsible('health-diseases')" @keydown.space.prevent="Actions.toggleCollapsible('health-diseases')">
           🦠 常见疾病
           <span class="badge badge-warning" style="margin-left:6px;" x-text="$store.app.bundle.health.common_diseases.length + '种'"></span>
         </div>
@@ -422,7 +425,7 @@
 
       <!-- Bathing Guide (collapsible) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-bathing'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('health-bathing')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['health-bathing']" @click="Actions.toggleCollapsible('health-bathing')" @keydown.enter="Actions.toggleCollapsible('health-bathing')" @keydown.space.prevent="Actions.toggleCollapsible('health-bathing')">
           🛁 洗澡指南
         </div>
         <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['health-bathing']">
@@ -463,7 +466,7 @@
 
       <!-- Body Condition Score (collapsible) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-bcs'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('health-bcs')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['health-bcs']" @click="Actions.toggleCollapsible('health-bcs')" @keydown.enter="Actions.toggleCollapsible('health-bcs')" @keydown.space.prevent="Actions.toggleCollapsible('health-bcs')">
           📊 体况评分 (BCS)
         </div>
         <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['health-bcs']">
@@ -471,7 +474,7 @@
             <span x-text="$store.app.bundle.health.body_condition_score.scale"></span> · <span x-text="$store.app.bundle.health.body_condition_score.description"></span>
           </p>
           <template x-for="s in $store.app.bundle.health.body_condition_score.scores" :key="s.score">
-            <div style="margin-bottom:10px;padding:10px;border-left:3px solid var(--color-warning);background:var(--color-cream);border-radius:0 8px 8px 0;">
+            <div style="margin-bottom:10px;padding:10px;border-top:3px solid var(--color-warning);background:var(--color-cream);border-radius:8px;">
               <p style="font-weight:600;font-size:14px;"><span x-text="s.score + '分'"></span> <span x-text="s.label"></span></p>
               <p style="font-size:13px;color:var(--color-text-light);" x-text="s.description"></p>
               <p style="font-size:13px;font-weight:600;color:var(--sunrise-deep);" x-text="s.action"></p>
@@ -482,7 +485,7 @@
 
       <!-- Checkup Schedule (collapsible) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-checkup'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('health-checkup')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['health-checkup']" @click="Actions.toggleCollapsible('health-checkup')" @keydown.enter="Actions.toggleCollapsible('health-checkup')" @keydown.space.prevent="Actions.toggleCollapsible('health-checkup')">
           📅 体检时间表
         </div>
         <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['health-checkup']">
@@ -499,7 +502,7 @@
 
       <!-- Post-Bath Watch (collapsible) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['health-postbath'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('health-postbath')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['health-postbath']" @click="Actions.toggleCollapsible('health-postbath')" @keydown.enter="Actions.toggleCollapsible('health-postbath')" @keydown.space.prevent="Actions.toggleCollapsible('health-postbath')">
           ⚠️ 洗澡后观察
         </div>
         <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['health-postbath']">
@@ -523,11 +526,11 @@
     <!-- ============================================================
          TAB 4: 📚 成长 (growth)
          ============================================================ -->
-    <section class="tab-content page" x-show="$store.app.currentTab === 'growth'" x-transition>
+    <section class="tab-content page" role="tabpanel" x-show="$store.app.currentTab === 'growth'" x-transition>
       <template x-if="$store.app.bundle">
       <div>
 
-      <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">📚 成长</h2>
+      <h2 class="page-title">📚 成长</h2>
 
       <!-- Current Milestone -->
       <div class="card" x-show="$store.app.bundle && $store.app.age">
@@ -563,7 +566,7 @@
             <div x-show="m.daily_tasks && m.daily_tasks.length > 0" class="mt-12">
               <p style="font-size:14px;font-weight:600;margin-bottom:6px;">📋 每日任务</p>
               <template x-for="dt in m.daily_tasks" :key="dt.task">
-                <div style="margin-bottom:6px;padding:8px;border-left:3px solid var(--color-orange);padding-left:12px;">
+                <div style="margin-bottom:6px;padding:8px;border-top:2px solid var(--color-orange);padding-top:6px;">
                   <span style="font-size:14px;font-weight:600;" x-text="dt.task"></span>
                   <span class="badge badge-danger" style="margin-left:4px;font-size:10px;" x-show="dt.mandatory">必须</span>
                   <p style="font-size:13px;color:var(--color-text-light);margin-top:2px;" x-text="dt.detail"></p>
@@ -580,7 +583,7 @@
 
       <!-- Tutorials (collapsible) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-tutorials'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('growth-tutorials')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['growth-tutorials']" @click="Actions.toggleCollapsible('growth-tutorials')" @keydown.enter="Actions.toggleCollapsible('growth-tutorials')" @keydown.space.prevent="Actions.toggleCollapsible('growth-tutorials')">
           🎓 训练教程大全
         </div>
         <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['growth-tutorials']">
@@ -596,7 +599,7 @@
               <template x-for="(step, idx) in tutorial.steps" :key="idx">
                 <p style="font-size:13px;color:var(--color-text-light);margin-bottom:3px;" x-text="(idx+1)+'. ' + step"></p>
               </template>
-              <div x-show="tutorial.common_mistakes && tutorial.common_mistakes.length > 0" style="margin-top:8px;padding:8px;background:#FDEDEC;border-radius:8px;">
+              <div x-show="tutorial.common_mistakes && tutorial.common_mistakes.length > 0" style="margin-top:8px;padding:8px;background:var(--color-danger-light);border-radius:8px;">
                 <p style="font-size:12px;font-weight:600;color:var(--color-danger);margin-bottom:4px;">常见错误:</p>
                 <template x-for="mistake in tutorial.common_mistakes" :key="mistake">
                   <p style="font-size:12px;color:var(--color-text-light);margin-bottom:2px;" x-text="mistake"></p>
@@ -623,7 +626,7 @@
 
       <!-- Training Principles (collapsible) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-principles'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('growth-principles')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['growth-principles']" @click="Actions.toggleCollapsible('growth-principles')" @keydown.enter="Actions.toggleCollapsible('growth-principles')" @keydown.space.prevent="Actions.toggleCollapsible('growth-principles')">
           📋 训练核心原则
         </div>
         <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['growth-principles']">
@@ -636,7 +639,7 @@
 
       <!-- Signs of Fear (collapsible) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-fear'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('growth-fear')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['growth-fear']" @click="Actions.toggleCollapsible('growth-fear')" @keydown.enter="Actions.toggleCollapsible('growth-fear')" @keydown.space.prevent="Actions.toggleCollapsible('growth-fear')">
           😨 恐惧信号识别
         </div>
         <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['growth-fear']">
@@ -651,7 +654,7 @@
 
       <!-- Missed Socialization Window (collapsible) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['growth-missed'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('growth-missed')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['growth-missed']" @click="Actions.toggleCollapsible('growth-missed')" @keydown.enter="Actions.toggleCollapsible('growth-missed')" @keydown.space.prevent="Actions.toggleCollapsible('growth-missed')">
           ⏰ 错过社会化窗口期？
         </div>
         <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['growth-missed']">
@@ -665,7 +668,7 @@
     <!-- ============================================================
          TAB 5: 📖 百科 (encyclopedia)
          ============================================================ -->
-    <section class="tab-content" x-show="$store.app.currentTab === 'encyclopedia'" x-transition>
+    <section class="tab-content" role="tabpanel" x-show="$store.app.currentTab === 'encyclopedia'" x-transition>
       <template x-if="$store.app.bundle">
       <div>
 
@@ -702,7 +705,7 @@
 
       <!-- Toxic Plants (collapsible - reference) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-plants'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('encyclopedia-plants')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-plants']" @click="Actions.toggleCollapsible('encyclopedia-plants')" @keydown.enter="Actions.toggleCollapsible('encyclopedia-plants')" @keydown.space.prevent="Actions.toggleCollapsible('encyclopedia-plants')">
           🪴 <span x-text="$store.app.bundle.encyclopedia.toxic_plants.title"></span>
           <span class="badge badge-danger" style="margin-left:8px;" x-text="$store.app.bundle.encyclopedia.toxic_plants.items.length + '种'"></span>
         </div>
@@ -721,12 +724,12 @@
 
       <!-- Household Hazards (collapsible - reference) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-hazards'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('encyclopedia-hazards')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-hazards']" @click="Actions.toggleCollapsible('encyclopedia-hazards')" @keydown.enter="Actions.toggleCollapsible('encyclopedia-hazards')" @keydown.space.prevent="Actions.toggleCollapsible('encyclopedia-hazards')">
           🏚️ <span x-text="$store.app.bundle.encyclopedia.household_hazards.title"></span>
         </div>
         <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-hazards']">
           <template x-for="h in $store.app.bundle.encyclopedia.household_hazards.items" :key="h.item">
-            <div style="margin-bottom:10px;padding:10px;border-left:3px solid var(--color-warning);background:var(--color-cream);border-radius:0 8px 8px 0;">
+            <div style="margin-bottom:10px;padding:10px;border-top:3px solid var(--color-warning);background:var(--color-cream);border-radius:8px;">
               <p style="font-weight:600;font-size:14px;" x-text="h.item"></p>
               <p style="font-size:13px;color:var(--color-danger);" x-text="'⚠️ '+h.risk"></p>
               <p style="font-size:13px;color:var(--color-success);" x-text="'✅ '+h.prevention"></p>
@@ -737,7 +740,7 @@
 
       <!-- Litter Types (collapsible - reference) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-litter'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('encyclopedia-litter')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-litter']" @click="Actions.toggleCollapsible('encyclopedia-litter')" @keydown.enter="Actions.toggleCollapsible('encyclopedia-litter')" @keydown.space.prevent="Actions.toggleCollapsible('encyclopedia-litter')">
           🧻 <span x-text="$store.app.bundle.encyclopedia.litter_types.title"></span>
         </div>
         <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-litter']">
@@ -745,7 +748,7 @@
             <div style="margin-bottom:12px;padding:10px;background:var(--color-cream);border-radius:8px;">
               <p style="font-weight:600;font-size:14px;">
                 <span x-text="lt.type"></span>
-                <span class="badge badge-success" style="margin-left:6px;font-size:11px;" x-show="lt.suitable_for_kitten">幼猫适用</span>
+                <span class="badge badge-success" style="margin-left:6px;font-size:12px;" x-show="lt.suitable_for_kitten">幼猫适用</span>
               </p>
               <template x-for="pro in lt.pros" :key="pro">
                 <p style="font-size:13px;color:var(--color-success);padding:1px 0;" x-text="'✅ '+pro"></p>
@@ -761,7 +764,7 @@
 
       <!-- Forbidden Foods Detail (collapsible - detailed version) -->
       <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-foods'] }">
-        <div class="collapsible-header" @click="Actions.toggleCollapsible('encyclopedia-foods')">
+        <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-foods']" @click="Actions.toggleCollapsible('encyclopedia-foods')" @keydown.enter="Actions.toggleCollapsible('encyclopedia-foods')" @keydown.space.prevent="Actions.toggleCollapsible('encyclopedia-foods')">
           🚫 <span x-text="$store.app.bundle.encyclopedia.forbidden_foods.title"></span>
         </div>
         <div class="collapsible-body" x-show="$store.ui.collapsibleState && $store.ui.collapsibleState['encyclopedia-foods']">
@@ -786,27 +789,27 @@
     <!-- ============================================================
          TAB 6: ⚙️ 设置 (settings)
          ============================================================ -->
-    <section class="tab-content page" x-show="$store.app.currentTab === 'settings'" x-transition>
+    <section class="tab-content page" role="tabpanel" x-show="$store.app.currentTab === 'settings'" x-transition>
       <template x-if="$store.app.cat">
       <div>
 
-      <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">⚙️ 设置</h2>
+      <h2 class="page-title">⚙️ 设置</h2>
 
       <!-- Cat Edit Form -->
       <div class="card" x-show="$store.app.cat">
         <div class="card-header">🐱 编辑猫咪信息</div>
         <form @submit.prevent="Actions.submitSettingsForm($el); alert('保存成功！')">
           <div class="form-group">
-            <label class="form-label">名字</label>
-            <input class="form-input" type="text" name="name" :value="$store.app.cat.name" maxlength="30">
+            <label class="form-label" for="settings-name">名字</label>
+            <input class="form-input" id="settings-name" type="text" name="name" :value="$store.app.cat.name" maxlength="30">
           </div>
           <div class="form-group">
-            <label class="form-label">生日</label>
-            <input class="form-input" type="date" name="birthday" :value="$store.app.cat.birthday">
+            <label class="form-label" for="settings-birthday">生日</label>
+            <input class="form-input" id="settings-birthday" type="date" name="birthday" :value="$store.app.cat.birthday">
           </div>
           <div class="form-group">
-            <label class="form-label">品种</label>
-            <select class="form-select" name="breed" :value="$store.app.cat.breed">
+            <label class="form-label" for="settings-breed">品种</label>
+            <select class="form-select" id="settings-breed" name="breed" :value="$store.app.cat.breed">
               <option value="中华田园猫">中华田园猫</option>
               <option value="橘猫">橘猫</option>
               <option value="狸花猫">狸花猫</option>
@@ -841,8 +844,9 @@
         <div class="card-header">🔗 分享链接</div>
         <p style="font-size:13px;color:var(--color-text-light);margin-bottom:8px;">将此链接分享给家人，他们可以一起管理猫咪</p>
         <div style="display:flex;gap:8px;">
+          <label class="sr-only" for="share-link-input" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">分享链接</label>
           <input class="form-input" type="text" readonly :value="window.location.origin + window.location.pathname + '?cat=' + $store.app.shareKey" style="flex:1;font-size:13px;" id="share-link-input">
-          <button class="btn btn-secondary" style="width:auto;padding:12px 16px;" @click="Actions.copyShareLink($el)">复制</button>
+          <button class="btn btn-secondary" type="button" style="width:auto;padding:12px 16px;" @click="Actions.copyShareLink($el)">复制</button>
         </div>
       </div>
 
@@ -854,8 +858,8 @@
         <div x-show="!$store.ui.chatApiKey" style="margin-bottom:12px;">
           <p style="font-size:13px;color:var(--color-text-light);margin-bottom:6px;">请先设置 DeepSeek API Key（<a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:var(--color-orange);">获取API Key</a>）</p>
           <div style="display:flex;gap:8px;">
-            <input class="form-input" type="password" placeholder="sk-..." x-model="$store.ui.chatApiKey" style="flex:1;font-size:13px;">
-            <button class="btn btn-primary" style="width:auto;padding:10px 16px;font-size:13px;" @click="Actions.setChatApiKey($store.ui.chatApiKey)">保存</button>
+            <input class="form-input" type="password" placeholder="sk-..." x-model="$store.ui.chatApiKey" aria-label="DeepSeek API Key" style="flex:1;font-size:13px;">
+            <button class="btn btn-primary" type="button" style="width:auto;padding:10px 16px;font-size:13px;" @click="Actions.setChatApiKey($store.ui.chatApiKey)">保存</button>
           </div>
         </div>
 
@@ -877,7 +881,8 @@
             if (q) { Actions.sendChatMessage(q); }
             setTimeout(() => { let el = document.getElementById('chat-messages-container'); if (el) el.scrollTop = el.scrollHeight; }, 100);
           ">
-            <input class="chat-input" type="text" placeholder="输入问题..." x-model="$store.ui.chatInput">
+            <label class="sr-only" for="chat-input" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">输入问题</label>
+            <input class="chat-input" id="chat-input" type="text" placeholder="输入问题..." x-model="$store.ui.chatInput">
             <button class="chat-send" type="submit" :disabled="$store.ui.chatLoading">发送</button>
           </form>
         </div>
@@ -904,11 +909,11 @@
     <!-- ============================================================
          TAB 6: 🆘 紧急 (emergency)
          ============================================================ -->
-    <section class="tab-content page" x-show="$store.app.currentTab === 'emergency'" x-transition>
+    <section class="tab-content page" role="tabpanel" x-show="$store.app.currentTab === 'emergency'" x-transition>
       <template x-if="$store.app.bundle">
       <div>
 
-      <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">🆘 紧急情况</h2>
+      <h2 class="page-title">🆘 紧急情况</h2>
 
       <!-- Poison Helpline -->
       <div class="card" style="background:var(--color-danger-light);border:2px solid var(--color-danger);">
@@ -922,7 +927,7 @@
         <div class="card-header">🚨 需要立即就医的情况</div>
         <template x-for="item in $store.app.bundle.emergency.when_to_see_vet" :key="item.symptom">
           <div class="collapsible" :class="{ open: $store.ui.collapsibleState && $store.ui.collapsibleState['emergency-'+item.symptom] }">
-            <div class="collapsible-header" @click="Actions.toggleCollapsible('emergency-'+item.symptom)" style="font-size:14px;">
+            <div class="collapsible-header" role="button" tabindex="0" :aria-expanded="$store.ui.collapsibleState && $store.ui.collapsibleState['emergency-'+item.symptom]" @click="Actions.toggleCollapsible('emergency-'+item.symptom)" @keydown.enter="Actions.toggleCollapsible('emergency-'+item.symptom)" @keydown.space.prevent="Actions.toggleCollapsible('emergency-'+item.symptom)" style="font-size:14px;">
               <span>
                 <span class="badge badge-danger" style="margin-right:6px;" x-text="item.urgency"></span>
                 <span x-text="item.symptom"></span>
@@ -1007,34 +1012,34 @@
       </template>
     </section>
 
-  </div><!-- /main content wrapper -->
+  </main><!-- /main content wrapper -->
   <!-- ===== Bottom Navigation ===== -->
-  <nav class="tab-bar" x-show="!$store.app.loading && $store.app.cat && !$store.ui.notFound">
-    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'home' }" @click="Actions.switchTab('home')">
+  <nav class="tab-bar" role="tablist" aria-label="主导航" x-show="!$store.app.loading && $store.app.cat && !$store.ui.notFound">
+    <button class="tab-btn" role="tab" :class="{ active: $store.app.currentTab === 'home' }" :aria-selected="$store.app.currentTab === 'home'" @click="Actions.switchTab('home')">
       <span class="tab-icon">🏠</span>
       <span>首页</span>
     </button>
-    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'feeding' }" @click="Actions.switchTab('feeding')">
+    <button class="tab-btn" role="tab" :class="{ active: $store.app.currentTab === 'feeding' }" :aria-selected="$store.app.currentTab === 'feeding'" @click="Actions.switchTab('feeding')">
       <span class="tab-icon">🍼</span>
       <span>喂养</span>
     </button>
-    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'health' }" @click="Actions.switchTab('health')">
+    <button class="tab-btn" role="tab" :class="{ active: $store.app.currentTab === 'health' }" :aria-selected="$store.app.currentTab === 'health'" @click="Actions.switchTab('health')">
       <span class="tab-icon">🏥</span>
       <span>健康</span>
     </button>
-    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'growth' }" @click="Actions.switchTab('growth')">
+    <button class="tab-btn" role="tab" :class="{ active: $store.app.currentTab === 'growth' }" :aria-selected="$store.app.currentTab === 'growth'" @click="Actions.switchTab('growth')">
       <span class="tab-icon">📚</span>
       <span>成长</span>
     </button>
-    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'encyclopedia' }" @click="Actions.switchTab('encyclopedia')">
+    <button class="tab-btn" role="tab" :class="{ active: $store.app.currentTab === 'encyclopedia' }" :aria-selected="$store.app.currentTab === 'encyclopedia'" @click="Actions.switchTab('encyclopedia')">
       <span class="tab-icon">📖</span>
       <span>百科</span>
     </button>
-    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'settings' }" @click="Actions.switchTab('settings')">
+    <button class="tab-btn" role="tab" :class="{ active: $store.app.currentTab === 'settings' }" :aria-selected="$store.app.currentTab === 'settings'" @click="Actions.switchTab('settings')">
       <span class="tab-icon">⚙️</span>
       <span>设置</span>
     </button>
-    <button class="tab-btn" :class="{ active: $store.app.currentTab === 'emergency' }" @click="Actions.switchTab('emergency')">
+    <button class="tab-btn" role="tab" :class="{ active: $store.app.currentTab === 'emergency' }" :aria-selected="$store.app.currentTab === 'emergency'" @click="Actions.switchTab('emergency')">
       <span class="tab-icon">🆘</span>
       <span>紧急</span>
     </button>
